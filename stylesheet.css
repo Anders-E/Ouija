@@ -1,9 +1,10 @@
 html, body {
     overflow: hidden;
+    margin: 0px;
 }
 
 #ouijaCanvas {
-    background-image: url(res/board.png);
-    cursor: none;
-    /*style="border:1px solid #000000;"*/
+    /*background-image: url(res/board.png);*/
+    /*cursor: none;*/
+    border:1px solid #000000;
 }

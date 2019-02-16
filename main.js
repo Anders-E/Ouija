@@ -5,41 +5,49 @@ class Vector2 {
     }
 }
 
-const canvasPos = getPosition(document.getElementById("ouijaCanvas"));
-var mouse = new Vector2(0, 0);
-
-
 function main() {
-    init();
-    update();
+    var canvas = document.getElementById("ouijaCanvas");
+    init(canvas);
+    var ctx = canvas.getContext("2d");
+    requestAnimationFrame(function(timestamp) {
+        gameLoop(timestamp, 0, canvas, ctx);
+    });
 }
 
-function init() {
-    var canvas = document.getElementById("ouijaCanvas");
-    canvas.width = 960;
-    canvas.height = 640;
+function init(canvas) {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
     canvas.addEventListener("mousemove", setMousePosition, false);
+    window.mouse = new Vector2(0, 0);
+    window.canvasPos = getElementPosition(canvas);
 }
 
-function update() {
-    var canvas = document.getElementById("ouijaCanvas");
-    var context = canvas.getContext("2d");
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.beginPath();
+function gameLoop(ts, prevTs, canvas, ctx) {
+    var dt = ts - prevTs;
+    update(dt);
+    render(canvas, ctx);
+    requestAnimationFrame(function(timestamp) {
+        gameLoop(timestamp, ts, canvas, ctx);
+    });
+}
+
+function update(dt) {
+
+}
+
+function render(canvas, ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     var marker = new Image();
     marker.src = "res/marker.png";
-    context.drawImage(marker, mouse.x - marker.width / 2, mouse.y - marker.height / 2);
-    //context.arc(mouseX, mouseY, 50, 0, 2 * Math.PI, true);
-    context.fillStyle = "#FF6A6A";
-    context.fill();
-    requestAnimationFrame(update);
+    ctx.drawImage(marker, window.mouse.x - marker.width / 2, window.mouse.y - marker.height / 2);
 }
 
 function setMousePosition(e) {
-    mouse = new Vector2(e.clientX - canvasPos.x, e.clientY - canvasPos.y);
+    window.mouse = new Vector2(e.clientX - canvasPos.x, e.clientY - canvasPos.y);
 }
 
-function getPosition(el) {
+function getElementPosition(el) {
     var x = 0;
     var y = 0;
     while (el) {
@@ -49,5 +57,3 @@ function getPosition(el) {
     }
     return new Vector2(x, y);
 }
-
-
