@@ -16,6 +16,10 @@ class Vector2 {
         return new Vector2(other.x - this.x, other.y - this.y);
     }
 
+    dist(other) {
+        return Math.sqrt((other.x - this.x) ** 2 + (other.y - this.y) ** 2);
+    }
+
     moveToward(pos, dist) {
         const movement = this.dir(pos).normalize();
         return new Vector2(this.x + movement.x * dist, this.y + movement.y * dist);
@@ -32,7 +36,8 @@ class Marker {
     }
 
     update(dt) {
-        if (mouseDown) {
+        let dist = this.pos.dist(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2));
+        if (mouseDown && dist > 5 ) {
             this.pos = this.pos.moveToward(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2), dt * 0.2);
         }
     }
