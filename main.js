@@ -33,7 +33,7 @@ class Marker {
 
     update(dt) {
         if (mouseDown) {
-            this.pos = this.pos.moveToward(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2), 3);
+            this.pos = this.pos.moveToward(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2), dt * 0.2);
         }
     }
 
