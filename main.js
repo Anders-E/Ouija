@@ -1,3 +1,5 @@
+"use strict";
+
 class Vector2 {
     constructor(x, y) {
         this.x = x;
@@ -36,7 +38,7 @@ class Marker {
     }
 
     update(dt) {
-        let dist = this.pos.dist(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2));
+        const dist = this.pos.dist(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2));
         if (mouseDown && dist > 5 ) {
             this.pos = this.pos.moveToward(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2), dt * 0.2);
         }
