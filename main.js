@@ -1,55 +1,9 @@
+import { Vector2 } from "./vector2.mjs";
+import { Marker } from "./marker.mjs";
+
 "use strict";
 
-class Vector2 {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    normalize() {
-        return new Vector2(this.x / this.magnitude(), this.y / this.magnitude());
-    }
-
-    magnitude() {
-        return Math.sqrt(this.x ** 2 + this.y ** 2);
-    }
-
-    dir(other) {
-        return new Vector2(other.x - this.x, other.y - this.y);
-    }
-
-    dist(other) {
-        return Math.sqrt((other.x - this.x) ** 2 + (other.y - this.y) ** 2);
-    }
-
-    moveToward(pos, dist) {
-        const movement = this.dir(pos).normalize();
-        return new Vector2(this.x + movement.x * dist, this.y + movement.y * dist);
-    }
-}
-
-class Marker {
-    constructor(x, y) {
-        this.pos = new Vector2(x, y);
-        this.img = new Image();
-        this.img.src = "res/marker.png";
-        this.w = this.img.width;
-        this.h = this.img.height;
-    }
-
-    update(dt) {
-        const dist = this.pos.dist(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2));
-        if (mouseDown && dist > 5 ) {
-            this.pos = this.pos.moveToward(new Vector2(mouse.x - this.w / 2, mouse.y - this.h / 2), dt * 0.2);
-        }
-    }
-
-    render(ctx) {
-        ctx.drawImage(this.img, this.pos.x, this.pos.y);
-    }
-}
-
-function main() {
+window.main = function main() {
     const canvas = document.getElementById("ouijaCanvas");
     init(canvas);
     const ctx = canvas.getContext("2d");
@@ -81,7 +35,7 @@ function gameLoop(ts, prevTs, canvas, ctx) {
 }
 
 function update(dt) {
-    marker.update(dt);
+    marker.update(dt, mouse);
 }
 
 function render(canvas, ctx) {
