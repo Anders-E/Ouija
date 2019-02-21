@@ -7,9 +7,7 @@ window.main = function main() {
     const canvas = document.getElementById("ouijaCanvas");
     init(canvas);
     const ctx = canvas.getContext("2d");
-    requestAnimationFrame(function(timestamp) {
-        gameLoop(timestamp, 0, canvas, ctx);
-    });
+    requestAnimationFrame((timestamp) => gameLoop(timestamp, 0, canvas, ctx));
 }
 
 function init(canvas) {
@@ -29,9 +27,7 @@ function gameLoop(ts, prevTs, canvas, ctx) {
     const dt = ts - prevTs;
     update(dt);
     render(canvas, ctx);
-    requestAnimationFrame(function(timestamp) {
-        gameLoop(timestamp, ts, canvas, ctx);
-    });
+    requestAnimationFrame((timestamp) => gameLoop(timestamp, ts, canvas, ctx));
 }
 
 function update(dt) {
