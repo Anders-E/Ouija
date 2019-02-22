@@ -4,7 +4,7 @@ export class Marker {
     constructor(x, y) {
         this.pos = new Vector2(x, y);
         this.img = new Image();
-        this.img.src = "res/marker.png";
+        this.img.src = "res/marker.svg";
         this.w = this.img.width;
         this.h = this.img.height;
     }
