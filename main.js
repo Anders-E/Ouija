@@ -21,8 +21,6 @@ function init(canvas) {
     window.mouseDown = false;
     window.marker = new Marker(0, 0);
     window.canvasPos = canvas.getBoundingClientRect();
-    window.bg = new Image();
-    bg.src = "./res/board.svg";
 }
 
 function gameLoop(ts, prevTs, canvas, ctx) {
@@ -39,7 +37,6 @@ function update(dt) {
 function render(canvas, ctx) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(bg, 0, 0);
     marker.render(ctx);
 }
 

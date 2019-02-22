@@ -4,7 +4,9 @@ html, body {
 }
 
 #ouijaCanvas {
-    /*background-image: url(res/board.png);*/
+    background-image: url(res/board.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
     /*cursor: none;*/
     border:1px solid #000000;
 }
