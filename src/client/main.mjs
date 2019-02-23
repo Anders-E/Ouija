@@ -4,6 +4,7 @@ import { Vector2 } from '/vector2.mjs';
 main();
 
 function main() {
+    window.socket = io();
     const canvas = document.getElementById('ouijaCanvas');
     init(canvas);
     const ctx = canvas.getContext('2d');
