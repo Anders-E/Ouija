@@ -11,6 +11,8 @@ $ npm install
 $ npm start
 ```
 
+Once the server is up and running, open `http://localhost:3000/` in your browser.
+
 ## Run Ouija for development (auto-reload on changes)
 ```
 $ git clone https://github.com/Anders-E/Ouija.git
@@ -24,3 +26,5 @@ Now in one terminal, start the TypeScript compiler watcher:
 And finally in another terminal run the Node.js watcher:
 
 `$ npm run watch-node`
+
+Once the server is up and running, open `http://localhost:3000/` in your browser.
