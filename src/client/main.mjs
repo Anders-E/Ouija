@@ -1,5 +1,5 @@
-import { Marker } from '/client/marker.mjs';
-import { Vector2 } from '/client/vector2.mjs';
+import { Marker } from '/marker.mjs';
+import { Vector2 } from '/vector2.mjs';
 
 main();
 
