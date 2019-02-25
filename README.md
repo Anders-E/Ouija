@@ -8,6 +8,7 @@ To run the Ouija server:
 $ git clone https://github.com/Anders-E/Ouija.git
 $ cd Ouija
 $ npm install
+$ npm run build-ts
 $ npm start
 ```
 
