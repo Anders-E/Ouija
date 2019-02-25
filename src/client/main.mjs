@@ -37,7 +37,6 @@ function update(dt) {
 
 function render(canvas, ctx) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     marker.render(ctx);
 }
 
