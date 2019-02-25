@@ -1,22 +1,23 @@
-import { Vector2 } from "./vector2.mjs";
-import { Marker } from "./marker.mjs";
+import { Marker } from '/marker.mjs';
+import { Vector2 } from '/vector2.mjs';
 
-"use strict";
+main();
 
-window.main = function main() {
-    const canvas = document.getElementById("ouijaCanvas");
+function main() {
+    window.socket = io();
+    const canvas = document.getElementById('ouijaCanvas');
     init(canvas);
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     requestAnimationFrame((timestamp) => gameLoop(timestamp, 0, canvas, ctx));
-}
+};
 
 function init(canvas) {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
-    canvas.addEventListener("mousemove", setMousePosition, false);
-    canvas.addEventListener("mousedown", mouseDown, false);
-    canvas.addEventListener("mouseup", mouseUp, false);
-    //canvas.addEventListener("mouseleave", mouseUp, false);
+    canvas.addEventListener('mousemove', setMousePosition, false);
+    canvas.addEventListener('mousedown', mouseDown, false);
+    canvas.addEventListener('mouseup', mouseUp, false);
+    // canvas.addEventListener('mouseleave', mouseUp, false);
     window.mouse = new Vector2(0, 0);
     window.mouseDown = false;
     window.marker = new Marker(0, 0);
