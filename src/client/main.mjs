@@ -12,7 +12,7 @@ function main() {
 };
 
 function init(canvas) {
-    window.addEventListener('resize', (e) => setCanvasSize(canvas), false);
+    window.addEventListener('resize', () => setCanvasSize(canvas), false);
     setCanvasSize(canvas);
     canvas.addEventListener('mousemove', setMousePosition, false);
     canvas.addEventListener('mousedown', mouseDown, false);
