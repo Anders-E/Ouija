@@ -12,8 +12,8 @@ function main() {
 };
 
 function init(canvas) {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    window.addEventListener('resize', (e) => setCanvasSize(canvas), false);
+    setCanvasSize(canvas);
     canvas.addEventListener('mousemove', setMousePosition, false);
     canvas.addEventListener('mousedown', mouseDown, false);
     canvas.addEventListener('mouseup', mouseUp, false);
@@ -38,6 +38,11 @@ function update(dt) {
 function render(canvas, ctx) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     marker.render(ctx);
+}
+
+function setCanvasSize(canvas) {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 }
 
 function setMousePosition(e) {
