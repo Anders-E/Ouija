@@ -4,6 +4,15 @@ import { Vector2 } from '/vector2.mjs';
 main();
 
 function main() {
+    /* EXAMPLE THREE JS */
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+    /* EXAMPLE THREE JS */
+
     window.socket = io();
     const canvas = document.getElementById('ouijaCanvas');
     init(canvas);
