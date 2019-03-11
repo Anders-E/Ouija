@@ -17,6 +17,11 @@ function main() {
     initScene(scene, renderer);
 
     window.controls = new THREE.OrbitControls (camera);
+    window.controls.enableDamping = true;
+    window.controls.dampingFactor = 0.75;
+    window.controls.enablePan = false;
+    window.controls.maxDistance = 5;
+    window.controls.minDistance = 3;
     window.controls.update();
 
     window.socket = io();
@@ -38,7 +43,7 @@ function main() {
 
 function initScene (scene, renderer) {
   renderer.setSize(window.innerWidth, window.innerHeight );
-  renderer.setClearColor (new THREE.Color(1, 1, 1));
+  renderer.setClearColor (new THREE.Color(0.02, 0.04, 0.06));
 
   //cameras
   window.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -53,8 +58,8 @@ function initScene (scene, renderer) {
   var ambientLight = new THREE.AmbientLight( 0xffffff, 10 ); // soft white light
   scene.add( ambientLight );
 
-  var light = new THREE.PointLight(0xffffff, 5);
-  light.position.set (-100, 200, 100);
+  var light = new THREE.PointLight(0x66b2ff, 10);
+  light.position.set (0, 3, 0);
   scene.add(light);
 
   //geometry
