@@ -8,12 +8,16 @@ function main() {
     window.scene = new THREE.Scene();
 
     window.renderer = new THREE.WebGLRenderer({antialias:true});
-    window.addEventListener('wheel', mouseWheel, false);
+
+    // window.addEventListener('wheel', mouseWheel, false);
     document.body.appendChild(renderer.domElement );
 
     window.clock = new THREE.Clock;
 
     initScene(scene, renderer);
+
+    window.controls = new THREE.OrbitControls (camera);
+    window.controls.update();
 
     window.socket = io();
 };
@@ -87,7 +91,10 @@ function initScene (scene, renderer) {
 function animate() {
 	requestAnimationFrame( animate );
   update(clock.getDelta ());
+
+  window.controls.update();
 	renderer.render(window.scene, window.camera);
+
 }
 animate();
 
@@ -116,11 +123,12 @@ function mouseWheel(e) {
   // camera.translateZ( e.deltaY * 0.01);
   zoomFactor = THREE.Math.clamp(zoomFactor + e.deltaY * 0.0001, 0, 1);
   var camPos = new THREE.Vector3(0,0,0);
-  // var tar = minCameraPosition, maxCameraPosition, zoomFactor);
-  camPos.lerp(window.minCameraPosition, window.maxCameraPosition, zoomFactor);
-  camera.position.copy(camPos);
-  // // camera.lookAt(new THREE.Vector3(0,0,0));
   console.log(camera.position.x + " " + camera.position.y + " " + camera.position.z);
+
+  // var tar = minCameraPosition, maxCameraPosition, zoomFactor);
+  camera.position.lerp(window.minCameraPosition, window.maxCameraPosition, zoomFactor);
+  // // camera.lookAt(new THREE.Vector3(0,0,0));
+  // console.log(camera.position.x + " " + camera.position.y + " " + camera.position.z);
 }
 
 function mouseDown(e) {
