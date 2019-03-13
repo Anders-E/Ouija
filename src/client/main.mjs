@@ -8,6 +8,8 @@ function main() {
     window.scene = new THREE.Scene();
 
     window.renderer = new THREE.WebGLRenderer({antialias:true});
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
     // window.addEventListener('wheel', mouseWheel, false);
     document.body.appendChild(renderer.domElement );
@@ -16,51 +18,40 @@ function main() {
 
     initScene(scene, renderer);
 
-    window.controls = new THREE.OrbitControls (camera);
-    window.controls.enableDamping = true;
-    window.controls.dampingFactor = 0.75;
-    window.controls.enablePan = false;
-    window.controls.maxDistance = 5;
-    window.controls.minDistance = 3;
-    window.controls.update();
+    window.addEventListener('mousedown', mouseDown, false);
 
     window.socket = io();
 };
-
-// function init(renderer) {
-//     window.addEventListener('resize', () => setCanvasSize(canvas), false);
-//     setCanvasSize(canvas);
-//     renderer.addEventListener('mousemove', setMousePosition, false);
-//     renderer.addEventListener('mousedown', mouseDown, false);
-//     renderer.addEventListener('mouseup', mouseUp, false);
-//     renderer.addEventListener('wheel', mouseWheel, false);
-//     // canvas.addEventListener('mouseleave', mouseUp, false);
-//     window.mouse = new Vector2(0, 0);
-//     window.mouseDown = false;
-//     window.marker = new Marker(0, 0);
-//     window.canvasPos = canvas.getBoundingClientRect();
-// }
 
 function initScene (scene, renderer) {
   renderer.setSize(window.innerWidth, window.innerHeight );
   renderer.setClearColor (new THREE.Color(0.02, 0.04, 0.06));
 
   //cameras
-  window.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+  window.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
   camera.position.set(0,5,7);
+  camera.rotation.set(-90, 0, 0);
   window.minCameraPosition = new THREE.Vector3(0,0,0);
   window.maxCameraPosition = new THREE.Vector3(0, 5, 7);
   window.zoomFactor = 0.5;
-  camera.lookAt(new THREE.Vector3(0,0,0));
+  // camera.lookAt(new THREE.Vector3(0,0,0));
   scene.add(camera);
 
-  //light
-  var ambientLight = new THREE.AmbientLight( 0xffffff, 10 ); // soft white light
-  scene.add( ambientLight );
+  window.mixer = new THREE.AnimationMixer ();
 
-  var light = new THREE.PointLight(0x66b2ff, 10);
-  light.position.set (0, 3, 0);
+  //light
+  // var ambientLight = new THREE.AmbientLight( 0xffffff, 1000); // soft white light
+  // scene.add( ambientLight );
+
+  var light = new THREE.PointLight(0x66b2ff, 3);
+  light.position.set (0, 2, 0);
   scene.add(light);
+
+  window.lightningLight = new THREE.PointLight(0x66b2ff, 0);
+  lightningLight.position.set(3, 5, 12);
+  lightningLight.castShadow = true;
+
+  scene.add(lightningLight);
 
   //geometry
   var loader = new THREE.GLTFLoader();
@@ -72,14 +63,30 @@ function initScene (scene, renderer) {
   	// called when the resource is loaded
   	function ( gltf ) {
 
-  		scene.add( gltf.scene );
 
-  		// gltf.animations; // Array<THREE.AnimationClip>
+  		gltf.animations; // Array<THREE.AnimationClip>
   		gltf.scene; // THREE.Scene
-  		// gltf.scenes; // Array<THREE.Scene>
+
+      //activate shadows for objects in scene
+      gltf.scene.traverse( function( node ) {
+        if ( node instanceof THREE.Mesh ) {
+          node.castShadow = true;
+          node.receiveShadow = true; }
+
+    } );
+      window.clips = gltf.animations;
+      window.mixer = new THREE.AnimationMixer (camera);
+      var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
+      action.setLoop(THREE.LoopOnce);
+      action.clampWhenFinished = true;
+      action.play();
+      // gltf.scenes; // Array<THREE.Scene>
   		// gltf.cameras; // Array<THREE.Camera>
   		gltf.asset; // Object
 
+      gltf.scene.castShadow = true;
+      gltf.scene.receiveShadow = true;
+      scene.add( gltf.scene );
   	},
   	// called while loading is progressing
   	function ( xhr ) {
@@ -94,12 +101,17 @@ function initScene (scene, renderer) {
 }
 
 function animate() {
-	requestAnimationFrame( animate );
-  update(clock.getDelta ());
+  var delta = clock.getDelta();
+  update(delta);
+  window.mixer.update(delta);
+  camera.lookAt(new THREE.Vector3(0,0,0));
 
-  window.controls.update();
+  window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
+
+  //if using orbit controls, update each frame
+  // window.controls.update();
 	renderer.render(window.scene, window.camera);
-
+  requestAnimationFrame( animate );
 }
 animate();
 
@@ -124,20 +136,13 @@ function setMousePosition(e) {
 
 function mouseWheel(e) {
 
-  //move camera
-  // camera.translateZ( e.deltaY * 0.01);
+  //zoom camera here
   zoomFactor = THREE.Math.clamp(zoomFactor + e.deltaY * 0.0001, 0, 1);
-  var camPos = new THREE.Vector3(0,0,0);
-  console.log(camera.position.x + " " + camera.position.y + " " + camera.position.z);
-
-  // var tar = minCameraPosition, maxCameraPosition, zoomFactor);
-  camera.position.lerp(window.minCameraPosition, window.maxCameraPosition, zoomFactor);
-  // // camera.lookAt(new THREE.Vector3(0,0,0));
-  // console.log(camera.position.x + " " + camera.position.y + " " + camera.position.z);
 }
 
 function mouseDown(e) {
     window.mouseDown = true;
+    window.lightningLight.intensity = 100;
 }
 
 function mouseUp(e) {
