@@ -44,7 +44,7 @@ function initScene (scene, renderer) {
   // scene.add( ambientLight );
 
   var light = new THREE.PointLight(0x66b2ff, 3);
-  light.position.set (0, 2, 0);
+  light.position.set(0, 2, 0);
   scene.add(light);
 
   window.lightningLight = new THREE.PointLight(0x66b2ff, 0);
@@ -68,7 +68,7 @@ function initScene (scene, renderer) {
   		gltf.scene; // THREE.Scene
 
       //activate shadows for objects in scene
-      gltf.scene.traverse( function( node ) {
+      gltf.scene.traverse( (node) => {
         if ( node instanceof THREE.Mesh ) {
           node.castShadow = true;
           node.receiveShadow = true; }
