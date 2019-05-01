@@ -61,7 +61,6 @@ function main() {
         console.log(socket);
 
         socket.on('game_marker_pos', pos => {
-            //console.log(pos);
             marker.pos = new Vector2(pos.x, pos.y);
         });
     });

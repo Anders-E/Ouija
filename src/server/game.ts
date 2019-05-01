@@ -29,6 +29,9 @@ export class Game {
                     );
                 }
             }
+            for (const player of this.players.values()) {
+                player.socket.emit('game_marker_pos', this.marker);
+            }
             this.playerInputs.clear();
         }, 500);
     }
@@ -38,7 +41,6 @@ export class Game {
             'player_marker_pos',
             (pos: PosMsg): void => {
                 this.playerInputs.set(player.socket.id, pos);
-                player.socket.emit('game_marker_pos', this.marker);
             },
         );
         console.log('player added to game');
