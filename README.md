@@ -1,20 +1,20 @@
 # Ouija
 Multiplayer HTML5 Ouija board running on Node.js with Express.js and Socket.IO.
 
-## Run Ouija
+## Build & Run Ouija
 To run the Ouija server:
 
 ```
 $ git clone https://github.com/Anders-E/Ouija.git
 $ cd Ouija
-$ npm install
+$ npm install --only=prod
 $ npm run build
 $ npm start
 ```
 
 Once the server is up and running, open `http://localhost:3000/` in your browser.
 
-## Run Ouija for development (auto-reload on changes)
+## Build & Run Ouija for development (auto-reload on changes, ESLint, Prettier)
 ```
 $ git clone https://github.com/Anders-E/Ouija.git
 $ cd Ouija
