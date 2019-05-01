@@ -32,10 +32,10 @@ function init(canvas) {
 }
 
 function update(dt) {
-    marker.update(dt, mouse);
-    socket.emit('player_marker_pos', marker.pos, pos => {
-        marker.pos = pos;
-    });
+    // marker.update(dt, mouse);
+    if (window.mouseDown) {
+        socket.emit('player_marker_pos', mouse);
+    }
 }
 
 function render(canvas, ctx) {
