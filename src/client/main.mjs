@@ -18,7 +18,9 @@ function main() {
 
     initScene(scene, renderer);
 
+    window.addEventListener('mousemove', setMousePosition, false);
     window.addEventListener('mousedown', mouseDown, false);
+    window.addEventListener('mouseup', mouseUp, true);
 
     window.socket = io();
 };
@@ -71,7 +73,18 @@ function initScene (scene, renderer) {
       gltf.scene.traverse( (node) => {
         if ( node instanceof THREE.Mesh ) {
           node.castShadow = true;
-          node.receiveShadow = true; }
+          node.receiveShadow = true;
+
+          console.log(node.name);
+          if(node.name == "BoardCollider") {
+            window.boardCollider = node;
+            window.boardCollider.visible = false;
+          }
+
+          if(node.name == "Marker") {
+            window.marker = node;
+          }
+         }
 
     } );
       window.clips = gltf.animations;
@@ -86,7 +99,10 @@ function initScene (scene, renderer) {
 
       gltf.scene.castShadow = true;
       gltf.scene.receiveShadow = true;
-      scene.add( gltf.scene );
+
+      // window.boardCollider = scene.getObjectByName("Board001");
+      // console.log(window.boardCollider);
+      scene.add( gltf.scene);
   	},
   	// called while loading is progressing
   	function ( xhr ) {
@@ -105,6 +121,13 @@ function animate() {
   update(delta);
   window.mixer.update(delta);
   camera.lookAt(new THREE.Vector3(0,0,0));
+  // if(window.marker != null) {
+  //   var pos = new THREE.Vector3(0,0,0);
+  //   pos.copy(window.marker.position);
+  //   pos = pos.multiplyScalar(0.1);
+  //   pos.x = 0;
+  //   camera.lookAt(pos);
+  // }
 
   window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
 
@@ -118,6 +141,26 @@ animate();
 
 function update(dt) {
     // marker.update(dt, mouse);
+    if(window.mouseDown) {
+      var raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(window.mouse, window.camera);
+      var intersects = [];
+      window.boardCollider.raycast(raycaster, intersects);
+      // var intersects = raycaster.intersectObject(window.boardCollider, false);
+      if(intersects.length > 0) {
+        var point = intersects[0].point;
+        var epsilon = 0.01;
+        if(point.distanceTo(window.marker.position) > epsilon) {
+          var mouseDirectionVector = new THREE.Vector3(0,0,0);
+          mouseDirectionVector.subVectors(point, window.marker.position);
+          console.log(mouseDirectionVector);
+
+          mouseDirectionVector.normalize ();
+          window.marker.translateOnAxis(mouseDirectionVector, dt * -0.5);
+        }
+      }
+    }
+  // if(Inp)
 }
 
 function render(canvas, ctx) {
@@ -131,7 +174,7 @@ function setCanvasSize(canvas) {
 }
 
 function setMousePosition(e) {
-    window.mouse = new Vector2(e.clientX - canvasPos.x, e.clientY - canvasPos.y);
+    window.mouse = new Vector2((e.clientX/window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
 }
 
 function mouseWheel(e) {
