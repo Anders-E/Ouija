@@ -1,11 +1,11 @@
-import { Vector2 } from "./vector2";
-import { Socket } from "socket.io";
+import { Vector2 } from './vector2';
+import { Socket } from 'socket.io';
 
 export class Player {
-    socket: Socket;
-    pos: Vector2;
+    public socket: Socket;
+    public pos: Vector2;
 
-    constructor(socket: Socket) {
+    public constructor(socket: Socket) {
         this.socket = socket;
         this.pos = new Vector2();
     }
