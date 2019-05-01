@@ -8,6 +8,17 @@ function main() {
     const canvas = document.getElementById('ouijaCanvas');
     init(canvas);
     const ctx = canvas.getContext('2d');
+
+    socket.on('connect', () => {
+        console.log('connected to server');
+        console.log(socket);
+
+        socket.on('game_marker_pos', (pos) => {
+            //console.log(pos);
+            marker.pos = new Vector2(pos.x, pos.y);
+        });
+    });
+
     requestAnimationFrame((timestamp) => gameLoop(timestamp, 0, canvas, ctx));
 };
 
@@ -33,6 +44,9 @@ function gameLoop(ts, prevTs, canvas, ctx) {
 
 function update(dt) {
     marker.update(dt, mouse);
+    socket.emit('player_marker_pos', marker.pos, (pos) => {
+        marker.pos = pos;
+    });
 }
 
 function render(canvas, ctx) {
