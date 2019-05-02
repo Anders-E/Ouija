@@ -18,6 +18,9 @@ function main() {
 
     initScene(scene, renderer);
 
+    window.accelerateDistance = 1;
+    window.accelerateSpeed = 0.5;
+
     window.addEventListener('mousemove', setMousePosition, false);
     window.addEventListener('mousedown', mouseDown, false);
     window.addEventListener('mouseup', mouseUp, true);
@@ -90,6 +93,8 @@ function initScene (scene, renderer) {
       window.clips = gltf.animations;
       window.mixer = new THREE.AnimationMixer (camera);
       var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
+      action.timeScale = 5 ; // add this
+
       action.setLoop(THREE.LoopOnce);
       action.clampWhenFinished = true;
       action.play();
@@ -147,18 +152,24 @@ function update(dt) {
       var intersects = [];
       window.boardCollider.raycast(raycaster, intersects);
       // var intersects = raycaster.intersectObject(window.boardCollider, false);
-      if(intersects.length > 0) {
+      // if(intersects.length > 0) {
         var point = intersects[0].point;
-        var epsilon = 0.01;
-        if(point.distanceTo(window.marker.position) > epsilon) {
-          var mouseDirectionVector = new THREE.Vector3(0,0,0);
+        var epsilon = 0.00;
+        var dist = point.distanceTo(window.marker.position);
+        if(dist > epsilon) {
+          var mouseDirectionVector = new THREE.Vector3(0.0,0.0,0.0);
           mouseDirectionVector.subVectors(point, window.marker.position);
-          console.log(mouseDirectionVector);
+          mouseDirectionVector.y = 0.0;
+          // console.log(point);
 
           mouseDirectionVector.normalize ();
-          window.marker.translateOnAxis(mouseDirectionVector, dt * -0.5);
+          window.marker.position.setY(0);
+          window.marker.position.x += mouseDirectionVector.x * dt * Math.sqrt(0.5 * dist);
+          window.marker.position.z += mouseDirectionVector.z * dt * Math.sqrt(0.5 * dist);
+          // window.marker.translateOnAxis(mouseDirectionVector.normalize(), dt * -0.5);
+
         }
-      }
+      // }
     }
   // if(Inp)
 }
