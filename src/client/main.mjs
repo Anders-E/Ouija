@@ -1,5 +1,6 @@
 import { Marker } from '/marker.mjs';
 import { Vector2 } from '/vector2.mjs';
+import {EventSystem, Event} from '/Events.mjs';
 
 main();
 
@@ -17,6 +18,25 @@ function main() {
     window.clock = new THREE.Clock;
 
     initScene(scene, renderer);
+
+    window.lightningListener = new THREE.AudioListener();
+    window.LightningSound = new THREE.Audio(lightningListener);
+    window.lightningAudioLoader = new THREE.AudioLoader();
+
+    window.eventSystem = new EventSystem ();
+    window.eventSystem.addEvent(new Event(function () {
+      console.log("hehe bög!!!!");
+      window.lightningLight.intensity = 100;
+
+      window.lightningAudioLoader.load('res/lightning.mp3', function (buffer) {
+        LightningSound.setBuffer(buffer)
+        LightningSound.setLoop(false);
+        LightningSound.setVolume(0.5);
+        LightningSound.play();
+      });
+    }, 0.001));
+
+
 
     window.accelerateDistance = 1;
     window.accelerateSpeed = 0.5;
@@ -40,6 +60,7 @@ function initScene (scene, renderer) {
   window.maxCameraPosition = new THREE.Vector3(0, 5, 7);
   window.zoomFactor = 0.5;
   // camera.lookAt(new THREE.Vector3(0,0,0));
+
   scene.add(camera);
 
   window.mixer = new THREE.AnimationMixer ();
@@ -50,11 +71,14 @@ function initScene (scene, renderer) {
 
   var light = new THREE.PointLight(0x66b2ff, 3);
   light.position.set(0, 2, 0);
+
   scene.add(light);
 
   window.lightningLight = new THREE.PointLight(0x66b2ff, 0);
   lightningLight.position.set(3, 5, 12);
   lightningLight.castShadow = true;
+  lightningLight.shadow.mapSize.width = 1024 * 4;
+  lightningLight.shadow.mapSize.height = 1024 * 4;
 
   scene.add(lightningLight);
 
@@ -125,6 +149,7 @@ function animate() {
   var delta = clock.getDelta();
   update(delta);
   window.mixer.update(delta);
+
   camera.lookAt(new THREE.Vector3(0,0,0));
   // if(window.marker != null) {
   //   var pos = new THREE.Vector3(0,0,0);
@@ -136,6 +161,7 @@ function animate() {
 
   window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
 
+
   //if using orbit controls, update each frame
   // window.controls.update();
 	renderer.render(window.scene, window.camera);
@@ -145,6 +171,18 @@ animate();
 
 
 function update(dt) {
+    //events
+    var rand = THREE.Math.randFloat(0.0, 1.0);
+    window.eventSystem.getEvents().forEach(function(event) {
+      // console.log(rand);
+      if(rand > event.getRate()) {
+        // console.log(event.getRate());
+      }
+
+      if(rand <= event.getRate()) {
+        event.getFunction()();
+      }
+    });
     // marker.update(dt, mouse);
     if(window.mouseDown) {
       var raycaster = new THREE.Raycaster();
@@ -152,7 +190,7 @@ function update(dt) {
       var intersects = [];
       window.boardCollider.raycast(raycaster, intersects);
       // var intersects = raycaster.intersectObject(window.boardCollider, false);
-      // if(intersects.length > 0) {
+      if(intersects.length > 0) {
         var point = intersects[0].point;
         var epsilon = 0.00;
         var dist = point.distanceTo(window.marker.position);
@@ -169,7 +207,7 @@ function update(dt) {
           // window.marker.translateOnAxis(mouseDirectionVector.normalize(), dt * -0.5);
 
         }
-      // }
+      }
     }
   // if(Inp)
 }
@@ -196,7 +234,6 @@ function mouseWheel(e) {
 
 function mouseDown(e) {
     window.mouseDown = true;
-    window.lightningLight.intensity = 100;
 }
 
 function mouseUp(e) {
