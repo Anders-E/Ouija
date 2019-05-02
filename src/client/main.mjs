@@ -31,8 +31,7 @@ function init(canvas) {
     window.canvasPos = canvas.getBoundingClientRect();
 }
 
-function update(dt) {
-    // marker.update(dt, mouse);
+function update() {
     if (window.mouseDown) {
         socket.emit('player_marker_pos', mouse);
     }
@@ -43,11 +42,10 @@ function render(canvas, ctx) {
     marker.render(ctx);
 }
 
-function gameLoop(ts, prevTs, canvas, ctx) {
-    const dt = ts - prevTs;
-    update(dt);
+function gameLoop(ts, canvas, ctx) {
+    update();
     render(canvas, ctx);
-    requestAnimationFrame(timestamp => gameLoop(timestamp, ts, canvas, ctx));
+    requestAnimationFrame(newTs => gameLoop(newTs, canvas, ctx));
 }
 
 function main() {
