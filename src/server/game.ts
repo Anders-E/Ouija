@@ -33,7 +33,7 @@ export class Game {
                 player.socket.emit('game_marker_pos', this.marker);
             }
             this.playerInputs.clear();
-        }, 500);
+        }, 1000 / 60);
     }
 
     public addPlayer(player: Player): void {
