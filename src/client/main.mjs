@@ -18,6 +18,7 @@ function main() {
     window.clock = new THREE.Clock;
 
     initScene(scene, renderer);
+    initSounds();
 
     window.lightningListener = new THREE.AudioListener();
     window.LightningSound = new THREE.Audio(lightningListener);
@@ -25,13 +26,12 @@ function main() {
 
     window.eventSystem = new EventSystem ();
     window.eventSystem.addEvent(new Event(function () {
-      console.log("hehe bög!!!!");
       window.lightningLight.intensity = 100;
 
       window.lightningAudioLoader.load('res/lightning.mp3', function (buffer) {
         LightningSound.setBuffer(buffer)
         LightningSound.setLoop(false);
-        LightningSound.setVolume(0.5);
+        LightningSound.setVolume(0.1);
         LightningSound.play();
       });
     }, 0.001));
@@ -102,7 +102,6 @@ function initScene (scene, renderer) {
           node.castShadow = true;
           node.receiveShadow = true;
 
-          console.log(node.name);
           if(node.name == "BoardCollider") {
             window.boardCollider = node;
             window.boardCollider.visible = false;
@@ -144,6 +143,18 @@ function initScene (scene, renderer) {
   	}
   );
 }
+
+function initSounds() {
+  window.ambientListener = new THREE.AudioListener();
+  window.ambientSound = new THREE.Audio(ambientListener);
+  window.ambientAudioLoader = new THREE.AudioLoader();
+  window.ambientAudioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', function (buffer) {
+    ambientSound.setBuffer(buffer)
+    ambientSound.setLoop(false);
+    ambientSound.setVolume(0.05);
+    ambientSound.play();
+  });
+  }
 
 function animate() {
   var delta = clock.getDelta();
