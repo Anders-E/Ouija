@@ -1,6 +1,6 @@
 export class EventSystem {
     constructor() {
-    self.events = [];
+      self.events = [];
     }
 
     getEvents() {

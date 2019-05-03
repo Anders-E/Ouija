@@ -25,10 +25,10 @@ function main() {
     window.lightningAudioLoader = new THREE.AudioLoader();
 
     window.eventSystem = new EventSystem ();
-    window.eventSystem.addEvent(new Event(function () {
+    window.eventSystem.addEvent(new Event(() => {
       window.lightningLight.intensity = 100;
 
-      window.lightningAudioLoader.load('res/lightning.mp3', function (buffer) {
+      window.lightningAudioLoader.load('res/lightning.mp3', (buffer) => {
         LightningSound.setBuffer(buffer)
         LightningSound.setLoop(false);
         LightningSound.setVolume(0.1);
@@ -184,7 +184,7 @@ animate();
 function update(dt) {
     //events
     var rand = THREE.Math.randFloat(0.0, 1.0);
-    window.eventSystem.getEvents().forEach(function(event) {
+    window.eventSystem.getEvents().forEach((event) => {
       // console.log(rand);
       if(rand > event.getRate()) {
         // console.log(event.getRate());
