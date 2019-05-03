@@ -1,5 +1,6 @@
 # Ouija
 Multiplayer HTML5 Ouija board running on Node.js with Express.js and Socket.IO.
+<img src="/screenshot.png" width="600">
 
 ## Build & Run Ouija
 To run the Ouija server:
