@@ -1,17 +1,17 @@
 import { Board } from './board';
 import { Vector2 } from './vector2';
 import { Player } from './player';
-import { PosMsg } from './interfaces/posmsg';
+import { Coords } from './interfaces/coords';
 
 export class Game {
     private players: Map<string, Player>;
-    private playerInputs: Map<string, PosMsg>;
+    private playerInputs: Map<string, Coords>;
     private board: Board;
     private marker: Vector2;
 
     public constructor() {
         this.players = new Map<string, Player>();
-        this.playerInputs = new Map<string, PosMsg>();
+        this.playerInputs = new Map<string, Coords>();
         this.board = new Board(100, 100);
         this.marker = new Vector2(1, 1);
     }
@@ -39,7 +39,7 @@ export class Game {
     public addPlayer(player: Player): void {
         player.socket.on(
             'player_marker_pos',
-            (pos: PosMsg): void => {
+            (pos: Coords): void => {
                 this.playerInputs.set(player.socket.id, pos);
             },
         );

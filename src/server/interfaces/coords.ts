@@ -1,4 +1,4 @@
-export interface PosMsg {
+export interface Coords {
     x: number;
     y: number;
 }
