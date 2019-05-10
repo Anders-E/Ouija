@@ -6,7 +6,6 @@ if (!fs.existsSync) {
     fs.mkdirSync(logDir);
 }
 export const logger = createLogger({
-    level: 'info',
     format: format.combine(
         format.timestamp({
             format: 'YYYY-MM-DD HH:mm:ss'
@@ -22,5 +21,6 @@ export const logger = createLogger({
     ]
 });
 if (process.env.NODE_ENV !== 'production') {
-    logger.add(new transports.Console({ format: format.combine(format.colorize(), format.simple()) }));
+    logger.add(new transports.Console({ level: 'debug', format: format.combine(format.colorize(), format.simple()) }));
+    logger.debug({ message: 'Not in production, logging to console' });
 }

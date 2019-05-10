@@ -44,7 +44,7 @@ export class Game {
                 this.playerInputs.set(player.socket.id, pos);
             }
         );
-        logger.info({ message: 'player added to game' });
+        logger.info({ message: 'Player added to game', id: player.socket.id });
         this.players.set(player.socket.id, player);
     }
 }

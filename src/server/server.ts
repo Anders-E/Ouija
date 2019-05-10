@@ -38,4 +38,4 @@ io.on(
 game.play();
 
 // const server: Server =
-http.listen(3000, (): winston.Logger => logger.info({ mesage: 'Ouija listening on port 3000' }));
+http.listen(3000, (): winston.Logger => logger.info({ message: 'Ouija listening on port 3000' }));
