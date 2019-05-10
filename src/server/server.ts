@@ -25,7 +25,7 @@ const logger = createLogger({
     defaultMeta: { service: 'ouija' },
     transports: [
         new transports.File({ filename: logDir + '/error.log', level: 'error' }),
-        new transports.File({ filename: 'all.log' })
+        new transports.File({ filename: logDir + '/all.log' })
     ]
 });
 
