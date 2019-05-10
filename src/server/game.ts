@@ -26,13 +26,11 @@ export class Game {
         setInterval((): void => {
             let inputSum = { x: this.marker.x, y: this.marker.y };
             for (const player of this.players.values()) {
-                if (this.playerInputs.has(player.socket.id)) {
-                    inputSum.x += this.playerInputs.get(player.socket.id).x;
-                    inputSum.y += this.playerInputs.get(player.socket.id).y;
-                    this.marker = new Vector2(
-                        this.playerInputs.get(player.socket.id).x,
-                        this.playerInputs.get(player.socket.id).y
-                    );
+                if (player.input != null) {
+                    inputSum.x += player.input.x;
+                    inputSum.y += player.input.y;
+                    this.marker = new Vector2(player.input.x, player.input.y);
+                    player.input = null;
                 }
             }
             for (const player of this.players.values()) {
@@ -46,7 +44,7 @@ export class Game {
         player.socket.on(
             'player_marker_pos',
             (pos: Coords): void => {
-                this.playerInputs.set(player.socket.id, pos);
+                this.playerInputs.set(player.id, pos);
                 logger.debug({
                     message: 'Input received from player',
                     event: 'player_marker_pos',
@@ -55,7 +53,7 @@ export class Game {
                 });
             }
         );
-        logger.info({ message: 'Player added to game', id: player.socket.id });
-        this.players.set(player.socket.id, player);
+        logger.info({ message: 'Player added to game', id: player.id });
+        this.players.set(player.id, player);
     }
 }

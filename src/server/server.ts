@@ -18,7 +18,7 @@ io.on(
     'connection',
     (playerSocket: Socket): void => {
         logger.info({
-            message: 'A player connected',
+            message: 'A user connected',
             event: 'connection',
             socketId: playerSocket.id
         });
