@@ -2,6 +2,7 @@ import { Board } from './board';
 import { Vector2 } from './vector2';
 import { Player } from './player';
 import { Coords } from './interfaces/coords';
+import { logger } from './logger';
 
 export class Game {
     private players: Map<string, Player>;
@@ -43,7 +44,7 @@ export class Game {
                 this.playerInputs.set(player.socket.id, pos);
             }
         );
-        console.log('player added to game');
+        logger.info({ message: 'player added to game' });
         this.players.set(player.socket.id, player);
     }
 }
