@@ -63,7 +63,7 @@ function main() {
         });
     });
 
-    requestAnimationFrame(timestamp => gameLoop(timestamp, 0, canvas, ctx));
+    requestAnimationFrame(timestamp => gameLoop(timestamp, canvas, ctx));
 }
 
 main();
