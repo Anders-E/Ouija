@@ -5,10 +5,12 @@ import { Logger } from 'winston';
 import { logger } from './logger';
 import { Player } from './player';
 import { Game } from './game';
+import { Server } from 'http';
 
-const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+// TODO Convert to ES6 Module imports
+const app: express.Express = express();
+const http: Server = require('http').Server(app);
+const io: Socket = require('socket.io')(http);
 
 app.use(express.static('src/client'));
 
@@ -22,6 +24,7 @@ io.on(
             event: 'connection',
             socketId: playerSocket.id
         });
+
         game.addPlayer(new Player(playerSocket));
 
         playerSocket.on(

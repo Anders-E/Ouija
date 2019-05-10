@@ -1,10 +1,13 @@
-import * as fs from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { createLogger, format, transports } from 'winston';
 
+// Create log dir
 const logDir = './logs';
-if (!fs.existsSync) {
-    fs.mkdirSync(logDir);
+if (!existsSync) {
+    mkdirSync(logDir);
 }
+
+// Winston Logger Configuration
 export const logger = createLogger({
     format: format.combine(
         format.timestamp({
@@ -20,6 +23,8 @@ export const logger = createLogger({
         new transports.File({ filename: logDir + '/all.log' })
     ]
 });
+
+// If not in production, add debug level console transport
 if (process.env.NODE_ENV !== 'production') {
     logger.add(new transports.Console({ level: 'debug', format: format.combine(format.colorize(), format.simple()) }));
     logger.debug({ message: 'Not in production, logging to console' });

@@ -33,6 +33,7 @@ export class Game {
                     player.input = null;
                 }
             }
+            // TODO fix proper broadcast
             for (const player of this.players.values()) {
                 player.socket.emit('game_marker_pos', this.marker);
             }
