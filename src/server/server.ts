@@ -19,6 +19,7 @@ io.on(
     (playerSocket: Socket): void => {
         logger.info({
             message: 'A player connected',
+            event: 'connection',
             socketId: playerSocket.id
         });
         game.addPlayer(new Player(playerSocket));
@@ -28,6 +29,7 @@ io.on(
             (): void => {
                 logger.info({
                     message: 'A user disconnected',
+                    event: 'disconnect',
                     socketId: playerSocket.id
                 });
             }

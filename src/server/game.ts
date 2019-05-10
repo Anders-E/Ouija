@@ -42,6 +42,12 @@ export class Game {
             'player_marker_pos',
             (pos: Coords): void => {
                 this.playerInputs.set(player.socket.id, pos);
+                logger.debug({
+                    message: 'Input received from player',
+                    event: 'player_marker_pos',
+                    id: player.socket.id,
+                    input: pos
+                });
             }
         );
         logger.info({ message: 'Player added to game', id: player.socket.id });
