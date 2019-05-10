@@ -25,7 +25,7 @@ export class Game {
                     inputSum.y += this.playerInputs.get(player.socket.id).y;
                     this.marker = new Vector2(
                         this.playerInputs.get(player.socket.id).x,
-                        this.playerInputs.get(player.socket.id).y,
+                        this.playerInputs.get(player.socket.id).y
                     );
                 }
             }
@@ -41,7 +41,7 @@ export class Game {
             'player_marker_pos',
             (pos: Coords): void => {
                 this.playerInputs.set(player.socket.id, pos);
-            },
+            }
         );
         console.log('player added to game');
         this.players.set(player.socket.id, player);
