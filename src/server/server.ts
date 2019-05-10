@@ -1,10 +1,10 @@
 import express from 'express';
 import { Socket } from 'socket.io';
+import { Logger } from 'winston';
 
 import { logger } from './logger';
 import { Player } from './player';
 import { Game } from './game';
-import winston = require('winston');
 
 const app = express();
 const http = require('http').Server(app);
@@ -38,4 +38,4 @@ io.on(
 game.play();
 
 // const server: Server =
-http.listen(3000, (): winston.Logger => logger.info({ message: 'Ouija listening on port 3000' }));
+http.listen(3000, (): Logger => logger.info({ message: 'Ouija listening on port 3000' }));
