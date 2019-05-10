@@ -1,3 +1,5 @@
+import * as uuid from 'uuid';
+
 import { Board } from './board';
 import { Vector2 } from './vector2';
 import { Player } from './player';
@@ -5,16 +7,19 @@ import { Coords } from './interfaces/coords';
 import { logger } from './logger';
 
 export class Game {
+    private id: string;
     private players: Map<string, Player>;
     private playerInputs: Map<string, Coords>;
     private board: Board;
     private marker: Vector2;
 
     public constructor() {
+        this.id = uuid.v4();
         this.players = new Map<string, Player>();
         this.playerInputs = new Map<string, Coords>();
         this.board = new Board(100, 100);
         this.marker = new Vector2(1, 1);
+        logger.info({ message: 'Game created', gameId: this.id });
     }
 
     public play(): void {
