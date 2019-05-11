@@ -1,24 +1,25 @@
 import express from 'express';
-import { Socket } from 'socket.io';
+import http from 'http';
+import socketio from 'socket.io';
 import { Logger } from 'winston';
 
 import { logger } from './logger';
 import { Player } from './player';
 import { Game } from './game';
-import { Server } from 'http';
 
-// TODO Convert to ES6 Module imports
+// Express, HTTP, and Socket.IO setup
 const app: express.Express = express();
-const http: Server = require('http').Server(app);
-const io: Socket = require('socket.io')(http);
+const httpServer: http.Server = new http.Server(app);
+const io: socketio.Server = socketio(httpServer);
 
+// Serve client
 app.use(express.static('src/client'));
 
 let game = new Game();
 
 io.on(
     'connection',
-    (playerSocket: Socket): void => {
+    (playerSocket: socketio.Socket): void => {
         logger.info({
             message: 'A user connected',
             event: 'connection',
@@ -43,4 +44,4 @@ io.on(
 game.play();
 
 // const server: Server =
-http.listen(3000, (): Logger => logger.info({ message: 'Ouija listening on port 3000' }));
+httpServer.listen(3000, (): Logger => logger.info({ message: 'Ouija listening on port 3000' }));
