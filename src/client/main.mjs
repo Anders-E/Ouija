@@ -4,6 +4,7 @@ import { Vector2 } from '/vector2.mjs';
 function setCanvasSize(canvas) {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
+    console.log(canvas.width, canvas.height);
 }
 
 function setMousePosition(e) {
@@ -33,7 +34,11 @@ function init(canvas) {
 
 function update() {
     if (window.mouseDown) {
-        socket.emit('player_marker_pos', mouse);
+        const canvas = document.getElementById('ouijaCanvas');
+        const w = canvas.width;
+        const h = canvas.height;
+        const normalizedCoords = new Vector2(mouse.x / w, mouse.y / h);
+        socket.emit('player_marker_pos', normalizedCoords);
     }
 }
 
@@ -59,7 +64,9 @@ function main() {
         console.log(socket);
 
         socket.on('game_marker_pos', pos => {
-            marker.pos = new Vector2(pos.x, pos.y);
+            const w = canvas.width;
+            const h = canvas.height;
+            marker.pos = new Vector2(pos.x * w, pos.y * h);
         });
     });
 

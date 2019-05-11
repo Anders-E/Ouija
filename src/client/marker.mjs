@@ -17,6 +17,6 @@ export class Marker {
     }
 
     render(ctx) {
-        ctx.drawImage(this.img, this.pos.x, this.pos.y);
+        ctx.drawImage(this.img, this.pos.x - this.w / 2, this.pos.y - this.h / 2);
     }
 }
