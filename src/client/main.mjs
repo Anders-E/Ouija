@@ -1,76 +1,227 @@
-import { Marker } from '/marker.mjs';
-import { Vector2 } from '/vector2.mjs';
+import { Vector2 } from './vector2.mjs';
+import { EventSystem, Event } from './eventSystem.mjs';
 
-function setCanvasSize(canvas) {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-    console.log(canvas.width, canvas.height);
-}
-
-function setMousePosition(e) {
-    window.mouse = new Vector2(e.clientX - canvasPos.x, e.clientY - canvasPos.y);
-}
-
-function mouseDown() {
+function mouseDown(e) {
     window.mouseDown = true;
 }
 
-function mouseUp() {
+function mouseUp(e) {
     window.mouseDown = false;
 }
 
-function init(canvas) {
-    window.addEventListener('resize', () => setCanvasSize(canvas), false);
-    setCanvasSize(canvas);
-    canvas.addEventListener('mousemove', setMousePosition, false);
-    canvas.addEventListener('mousedown', mouseDown, false);
-    canvas.addEventListener('mouseup', mouseUp, false);
-    // canvas.addEventListener('mouseleave', mouseUp, false);
-    window.mouse = new Vector2(0, 0);
-    window.mouseDown = false;
-    window.marker = new Marker(0, 0);
-    window.canvasPos = canvas.getBoundingClientRect();
-}
+function initScene(scene, renderer) {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(new THREE.Color(0.02, 0.04, 0.06));
 
-function update() {
-    if (window.mouseDown) {
-        const canvas = document.getElementById('ouijaCanvas');
-        const w = canvas.width;
-        const h = canvas.height;
-        const normalizedCoords = new Vector2(mouse.x / w, mouse.y / h);
-        socket.emit('player_marker_pos', normalizedCoords);
-    }
-}
+    //cameras
+    window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 5, 7);
+    camera.rotation.set(-90, 0, 0);
+    window.minCameraPosition = new THREE.Vector3(0, 0, 0);
+    window.maxCameraPosition = new THREE.Vector3(0, 5, 7);
+    window.zoomFactor = 0.5;
+    // camera.lookAt(new THREE.Vector3(0,0,0));
 
-function render(canvas, ctx) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    marker.render(ctx);
-}
+    scene.add(camera);
 
-function gameLoop(ts, canvas, ctx) {
-    update();
-    render(canvas, ctx);
-    requestAnimationFrame(newTs => gameLoop(newTs, canvas, ctx));
+    window.mixer = new THREE.AnimationMixer();
+
+    //light
+    // var ambientLight = new THREE.AmbientLight( 0xffffff, 1000); // soft white light
+    // scene.add( ambientLight );
+
+    var light = new THREE.PointLight(0x66b2ff, 3);
+    light.position.set(0, 2, 0);
+
+    scene.add(light);
+
+    window.lightningLight = new THREE.PointLight(0x66b2ff, 0);
+    lightningLight.position.set(3, 5, 12);
+    lightningLight.castShadow = true;
+    lightningLight.shadow.mapSize.width = 1024 * 4;
+    lightningLight.shadow.mapSize.height = 1024 * 4;
+
+    scene.add(lightningLight);
+
+    //geometry
+    var loader = new THREE.GLTFLoader();
+
+    // Load a glTF resource
+    loader.load(
+        // resource URL
+        '/res/board.glb',
+        // called when the resource is loaded
+        function(gltf) {
+            gltf.animations; // Array<THREE.AnimationClip>
+            gltf.scene; // THREE.Scene
+
+            //activate shadows for objects in scene
+            gltf.scene.traverse(node => {
+                if (node instanceof THREE.Mesh) {
+                    node.castShadow = true;
+                    node.receiveShadow = true;
+
+                    if (node.name == 'BoardCollider') {
+                        window.boardCollider = node;
+                        window.boardCollider.visible = false;
+                    }
+
+                    if (node.name == 'Marker') {
+                        window.marker = node;
+                    }
+                }
+            });
+            window.clips = gltf.animations;
+            window.mixer = new THREE.AnimationMixer(camera);
+            var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
+            action.timeScale = 5; // add this
+
+            action.setLoop(THREE.LoopOnce);
+            action.clampWhenFinished = true;
+            action.play();
+            // gltf.scenes; // Array<THREE.Scene>
+            // gltf.cameras; // Array<THREE.Camera>
+            gltf.asset; // Object
+
+            gltf.scene.castShadow = true;
+            gltf.scene.receiveShadow = true;
+
+            // window.boardCollider = scene.getObjectByName("Board001");
+            // console.log(window.boardCollider);
+            scene.add(gltf.scene);
+        },
+        // called while loading is progressing
+        function(xhr) {
+            console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+        },
+        // called when loading has errors
+        function(error) {
+            console.log('An error happened');
+        }
+    );
 }
 
 function main() {
+    /* EXAMPLE THREE JS */
+    window.scene = new THREE.Scene();
+
+    window.renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+
+    // window.addEventListener('wheel', mouseWheel, false);
+    document.body.appendChild(renderer.domElement);
+
+    window.clock = new THREE.Clock();
+
+    initScene(scene, renderer);
+    initSounds();
+
+    window.lightningListener = new THREE.AudioListener();
+    window.LightningSound = new THREE.Audio(lightningListener);
+    window.lightningAudioLoader = new THREE.AudioLoader();
+
+    window.eventSystem = new EventSystem();
+    window.eventSystem.addEvent(
+        new Event(() => {
+            window.lightningLight.intensity = 100;
+            window.lightningAudioLoader.load('res/lightning.mp3', buffer => {
+                LightningSound.setBuffer(buffer);
+                LightningSound.setLoop(false);
+                LightningSound.setVolume(0.1);
+                LightningSound.play();
+            });
+        }, 0.001)
+    );
+
+    window.accelerateDistance = 1;
+    window.accelerateSpeed = 0.5;
+
+    window.addEventListener('mousemove', setMousePosition, false);
+    window.addEventListener('mousedown', mouseDown, false);
+    window.addEventListener('mouseup', mouseUp, true);
+
     window.socket = io();
-    const canvas = document.getElementById('ouijaCanvas');
-    init(canvas);
-    const ctx = canvas.getContext('2d');
+}
 
-    socket.on('connect', () => {
-        console.log('connected to server');
-        console.log(socket);
-
-        socket.on('game_marker_pos', pos => {
-            const w = canvas.width;
-            const h = canvas.height;
-            marker.pos = new Vector2(pos.x * w, pos.y * h);
-        });
+function initSounds() {
+    window.ambientListener = new THREE.AudioListener();
+    window.ambientSound = new THREE.Audio(ambientListener);
+    window.ambientAudioLoader = new THREE.AudioLoader();
+    window.ambientAudioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', function(buffer) {
+        ambientSound.setBuffer(buffer);
+        ambientSound.setLoop(false);
+        ambientSound.setVolume(0.05);
+        ambientSound.play();
     });
+}
 
-    requestAnimationFrame(timestamp => gameLoop(timestamp, canvas, ctx));
+function animate() {
+    var delta = clock.getDelta();
+    update(delta);
+    window.mixer.update(delta);
+
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    // if(window.marker != null) {
+    //   var pos = new THREE.Vector3(0,0,0);
+    //   pos.copy(window.marker.position);
+    //   pos = pos.multiplyScalar(0.1);
+    //   pos.x = 0;
+    //   camera.lookAt(pos);
+    // }
+
+    window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
+
+    //if using orbit controls, update each frame
+    // window.controls.update();
+    renderer.render(window.scene, window.camera);
+    requestAnimationFrame(animate);
+}
+
+function update(dt) {
+    //events
+    var rand = THREE.Math.randFloat(0.0, 1.0);
+    window.eventSystem.getEvents().forEach(event => {
+        // console.log(rand);
+        if (rand > event.getRate()) {
+            // console.log(event.getRate());
+        }
+
+        if (rand <= event.getRate()) {
+            event.getFunction()();
+        }
+    });
+    // marker.update(dt, mouse);
+    if (window.mouseDown) {
+        var raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(window.mouse, window.camera);
+        var intersects = [];
+        window.boardCollider.raycast(raycaster, intersects);
+        // var intersects = raycaster.intersectObject(window.boardCollider, false);
+        if (intersects.length > 0) {
+            var point = intersects[0    ].point;
+            var epsilon = 0.0;
+            var dist = point.distanceTo(window.marker.position);
+            if (dist > epsilon) {
+                var mouseDirectionVector = new THREE.Vector3(0.0, 0.0, 0.0);
+                mouseDirectionVector.subVectors(point, window.marker.position);
+                mouseDirectionVector.y = 0.0;
+                // console.log(point);
+
+                mouseDirectionVector.normalize();
+                window.marker.position.setY(0);
+                window.marker.position.x += mouseDirectionVector.x * dt * Math.sqrt(0.5 * dist);
+                window.marker.position.z += mouseDirectionVector.z * dt * Math.sqrt(0.5 * dist);
+                // window.marker.translateOnAxis(mouseDirectionVector.normalize(), dt * -0.5);
+            }
+        }
+    }
+    // if(Inp)
+}
+
+function setMousePosition(e) {
+    window.mouse = new Vector2((e.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
 }
 
 main();
+animate();
