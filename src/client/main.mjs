@@ -68,6 +68,17 @@ function initScene(scene, renderer) {
 
                     if (node.name == 'Marker') {
                         window.marker = node;
+
+                        //socket setup
+                        window.socket = io();
+                        socket.on('connect', () => {
+                          console.log('connected to server');
+                          console.log(socket);
+
+                          socket.on('game_marker_pos', pos => {
+                              window.marker.position.set(pos.x, 0, pos.y);
+                            });
+                        });
                     }
                 }
             });
@@ -86,8 +97,6 @@ function initScene(scene, renderer) {
             gltf.scene.castShadow = true;
             gltf.scene.receiveShadow = true;
 
-            // window.boardCollider = scene.getObjectByName("Board001");
-            // console.log(window.boardCollider);
             scene.add(gltf.scene);
         },
         // called while loading is progressing
@@ -109,12 +118,15 @@ function main() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
-    // window.addEventListener('wheel', mouseWheel, false);
+    //TODO: Zoom?
+    // window.addEventListener('wheel', mouseWheel, false)
+    ;
     document.body.appendChild(renderer.domElement);
 
     window.clock = new THREE.Clock();
 
     initScene(scene, renderer);
+
     initSounds();
 
     window.lightningListener = new THREE.AudioListener();
@@ -140,8 +152,6 @@ function main() {
     window.addEventListener('mousemove', setMousePosition, false);
     window.addEventListener('mousedown', mouseDown, false);
     window.addEventListener('mouseup', mouseUp, true);
-
-    window.socket = io();
 }
 
 function initSounds() {
@@ -162,18 +172,12 @@ function animate() {
     window.mixer.update(delta);
 
     camera.lookAt(new THREE.Vector3(0, 0, 0));
-    // if(window.marker != null) {
-    //   var pos = new THREE.Vector3(0,0,0);
-    //   pos.copy(window.marker.position);
-    //   pos = pos.multiplyScalar(0.1);
-    //   pos.x = 0;
-    //   camera.lookAt(pos);
-    // }
 
     window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
 
     //if using orbit controls, update each frame
     // window.controls.update();
+
     renderer.render(window.scene, window.camera);
     requestAnimationFrame(animate);
 }
@@ -182,7 +186,6 @@ function update(dt) {
     //events
     var rand = THREE.Math.randFloat(0.0, 1.0);
     window.eventSystem.getEvents().forEach(event => {
-        // console.log(rand);
         if (rand > event.getRate()) {
             // console.log(event.getRate());
         }
@@ -191,7 +194,6 @@ function update(dt) {
             event.getFunction()();
         }
     });
-    // marker.update(dt, mouse);
     if (window.mouseDown) {
         var raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(window.mouse, window.camera);
@@ -199,24 +201,13 @@ function update(dt) {
         window.boardCollider.raycast(raycaster, intersects);
         // var intersects = raycaster.intersectObject(window.boardCollider, false);
         if (intersects.length > 0) {
-            var point = intersects[0    ].point;
-            var epsilon = 0.0;
-            var dist = point.distanceTo(window.marker.position);
-            if (dist > epsilon) {
-                var mouseDirectionVector = new THREE.Vector3(0.0, 0.0, 0.0);
-                mouseDirectionVector.subVectors(point, window.marker.position);
-                mouseDirectionVector.y = 0.0;
-                // console.log(point);
+            var point = intersects[0].point;
 
-                mouseDirectionVector.normalize();
-                window.marker.position.setY(0);
-                window.marker.position.x += mouseDirectionVector.x * dt * Math.sqrt(0.5 * dist);
-                window.marker.position.z += mouseDirectionVector.z * dt * Math.sqrt(0.5 * dist);
-                // window.marker.translateOnAxis(mouseDirectionVector.normalize(), dt * -0.5);
-            }
+            //emit point to Server
+            window.socket.emit('player_marker_pos', new Vector2(point.x, point.z));
+            console.log(point.x + ";" + point.y + ";" + point.z);
         }
     }
-    // if(Inp)
 }
 
 function setMousePosition(e) {
