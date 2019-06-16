@@ -68,6 +68,7 @@ function initScene(scene, renderer) {
 
                     if (node.name == 'Marker') {
                         window.marker = node;
+                        // window.marker.position.set(0, 0, 0);
 
                         //socket setup
                         window.socket = io();
@@ -77,6 +78,7 @@ function initScene(scene, renderer) {
 
                           socket.on('game_marker_pos', pos => {
                               window.marker.position.set(pos.x, 0, pos.y);
+                              console.log(pos.x + ", " + pos.y);
                             });
                         });
                     }
@@ -205,7 +207,7 @@ function update(dt) {
 
             //emit point to Server
             window.socket.emit('player_marker_pos', new Vector2(point.x, point.z));
-            console.log(point.x + ";" + point.y + ";" + point.z);
+            // console.log(point.x + ";" + point.y + ";" + point.z);
         }
     }
 }

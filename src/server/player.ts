@@ -8,6 +8,7 @@ export class Player {
     public socket: Socket;
     public pos: Vector2;
     public input: Coords;
+    public didSendInput: boolean = false;
 
     public constructor(socket: Socket) {
         this.id = socket.id;
@@ -18,6 +19,7 @@ export class Player {
             'player_marker_pos',
             (pos: Coords): void => {
                 this.input = pos;
+                this.didSendInput = true;
                 logger.debug({
                     message: 'Input received from player',
                     event: 'player_marker_pos',
