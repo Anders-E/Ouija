@@ -87,7 +87,7 @@ function initScene(scene, renderer) {
             window.clips = gltf.animations;
             window.mixer = new THREE.AnimationMixer(camera);
             var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
-            action.timeScale = 5; // add this
+            action.timeScale = 2; // add this
 
             action.setLoop(THREE.LoopOnce);
             action.clampWhenFinished = true;

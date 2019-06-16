@@ -47,9 +47,10 @@ export class Game {
 
               // this.marker = this.marker.moveToward(inputSum, this.markerVelocity);
               this.marker = this.marker.add(dir.normalize().scale((this.markerVelocity * distance) * this.deltaTime));
-              for (const player of this.players.values()) {
-                  player.socket.emit('game_marker_pos', this.marker);
-              }
+            }
+
+            for (const player of this.players.values()) {
+                player.socket.emit('game_marker_pos', this.marker);
             }
         }, this.deltaTime);
     }
