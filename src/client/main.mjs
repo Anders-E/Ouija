@@ -73,12 +73,12 @@ function initScene(scene, renderer) {
                         //socket setup
                         window.socket = io();
                         socket.on('connect', () => {
-                          console.log('connected to server');
-                          console.log(socket);
+                            console.log('connected to server');
+                            console.log(socket);
 
-                          socket.on('game_marker_pos', pos => {
-                              window.marker.position.set(pos.x, 0, pos.y);
-                              console.log(pos.x + ", " + pos.y);
+                            socket.on('game_marker_pos', pos => {
+                                window.marker.position.set(pos.x, 0, pos.y);
+                                console.log(pos.x + ', ' + pos.y);
                             });
                         });
                     }
@@ -112,6 +112,22 @@ function initScene(scene, renderer) {
     );
 }
 
+function initSounds() {
+    window.ambientListener = new THREE.AudioListener();
+    window.ambientSound = new THREE.Audio(ambientListener);
+    window.ambientAudioLoader = new THREE.AudioLoader();
+    window.ambientAudioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', function(buffer) {
+        ambientSound.setBuffer(buffer);
+        ambientSound.setLoop(false);
+        ambientSound.setVolume(0.05);
+        ambientSound.play();
+    });
+}
+
+function setMousePosition(e) {
+    window.mouse = new Vector2((e.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
+}
+
 function main() {
     /* EXAMPLE THREE JS */
     window.scene = new THREE.Scene();
@@ -122,7 +138,6 @@ function main() {
 
     //TODO: Zoom?
     // window.addEventListener('wheel', mouseWheel, false)
-    ;
     document.body.appendChild(renderer.domElement);
 
     window.clock = new THREE.Clock();
@@ -156,34 +171,6 @@ function main() {
     window.addEventListener('mouseup', mouseUp, true);
 }
 
-function initSounds() {
-    window.ambientListener = new THREE.AudioListener();
-    window.ambientSound = new THREE.Audio(ambientListener);
-    window.ambientAudioLoader = new THREE.AudioLoader();
-    window.ambientAudioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', function(buffer) {
-        ambientSound.setBuffer(buffer);
-        ambientSound.setLoop(false);
-        ambientSound.setVolume(0.05);
-        ambientSound.play();
-    });
-}
-
-function animate() {
-    var delta = clock.getDelta();
-    update(delta);
-    window.mixer.update(delta);
-
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-    window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
-
-    //if using orbit controls, update each frame
-    // window.controls.update();
-
-    renderer.render(window.scene, window.camera);
-    requestAnimationFrame(animate);
-}
-
 function update(dt) {
     //events
     var rand = THREE.Math.randFloat(0.0, 1.0);
@@ -212,8 +199,20 @@ function update(dt) {
     }
 }
 
-function setMousePosition(e) {
-    window.mouse = new Vector2((e.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
+function animate() {
+    var delta = clock.getDelta();
+    update(delta);
+    window.mixer.update(delta);
+
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
+
+    //if using orbit controls, update each frame
+    // window.controls.update();
+
+    renderer.render(window.scene, window.camera);
+    requestAnimationFrame(animate);
 }
 
 main();

@@ -24,7 +24,7 @@ export class Vector2 {
     }
 
     public scale(other: number): Vector2 {
-      return new Vector2(this.x * other, this.y * other);
+        return new Vector2(this.x * other, this.y * other);
     }
 
     public moveToward(pos: Vector2, dist: number): Vector2 {
@@ -33,10 +33,10 @@ export class Vector2 {
     }
 
     public sub(other: Vector2): Vector2 {
-      return new Vector2(this.x - other.x, this.y - other.y);
+        return new Vector2(this.x - other.x, this.y - other.y);
     }
 
     public add(other: Vector2): Vector2 {
-      return new Vector2(this.x + other.x, this.y + other.y);
+        return new Vector2(this.x + other.x, this.y + other.y);
     }
 }
