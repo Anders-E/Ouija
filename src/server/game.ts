@@ -51,8 +51,8 @@ export class Game {
         logger.info({ message: 'Player added to game', id: player.id });
 
         //Signal to players that a new player has joined
-        for(const player of this.players.values()) {
-          player.socket.emit('playerJoined', player.id);
+        for (const player of this.players.values()) {
+            player.socket.emit('playerJoined', player.id);
         }
 
         this.players.set(player.id, player);

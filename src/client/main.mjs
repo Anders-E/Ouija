@@ -9,6 +9,10 @@ function mouseUp(e) {
     window.mouseDown = false;
 }
 
+function onPlayerJoined() {
+    window.effectSound.play();
+}
+
 function initScene(scene, renderer) {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(new THREE.Color(0.02, 0.04, 0.06));
@@ -182,7 +186,7 @@ function main() {
     window.addEventListener('mouseup', mouseUp, true);
 }
 
-function update(dt) {
+function update() {
     //events
     var rand = THREE.Math.randFloat(0.0, 1.0);
     window.eventSystem.getEvents().forEach(event => {
@@ -210,13 +214,9 @@ function update(dt) {
     }
 }
 
-function onPlayerJoined() {
-  window.effectSound.play();
-}
-
 function animate() {
     var delta = clock.getDelta();
-    update(delta);
+    update();
     window.mixer.update(delta);
 
     camera.lookAt(new THREE.Vector3(0, 0, 0));
