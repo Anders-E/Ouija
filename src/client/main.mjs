@@ -78,7 +78,11 @@ function initScene(scene, renderer) {
 
                             socket.on('game_marker_pos', pos => {
                                 window.marker.position.set(pos.x, 0, pos.y);
-                                console.log(pos.x + ', ' + pos.y);
+                            });
+
+                            socket.on('playerJoined', id => {
+                                console.log('Player ' + id + ' connected');
+                                onPlayerJoined();
                             });
                         });
                     }
@@ -113,14 +117,21 @@ function initScene(scene, renderer) {
 }
 
 function initSounds() {
-    window.ambientListener = new THREE.AudioListener();
-    window.ambientSound = new THREE.Audio(ambientListener);
-    window.ambientAudioLoader = new THREE.AudioLoader();
-    window.ambientAudioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', function(buffer) {
+    window.audioListener = new THREE.AudioListener();
+
+    window.ambientSound = new THREE.Audio(audioListener);
+    window.audioLoader = new THREE.AudioLoader();
+    window.audioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', function(buffer) {
         ambientSound.setBuffer(buffer);
         ambientSound.setLoop(false);
         ambientSound.setVolume(0.05);
         ambientSound.play();
+    });
+
+    window.effectSound = new THREE.Audio(audioListener);
+    window.audioLoader.load('res/excited horror sound.wav', function(buffer) {
+        effectSound.setBuffer(buffer);
+        effectSound.setLoop(false);
     });
 }
 
@@ -197,6 +208,10 @@ function update(dt) {
             // console.log(point.x + ";" + point.y + ";" + point.z);
         }
     }
+}
+
+function onPlayerJoined() {
+  window.effectSound.play();
 }
 
 function animate() {
