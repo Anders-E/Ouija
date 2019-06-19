@@ -1,7 +1,6 @@
-[![CircleCI](https://circleci.com/gh/Anders-E/Ouija/tree/master.svg?style=svg)](https://circleci.com/gh/Anders-E/Ouija/tree/master)
-
 # Ouija
-Ouija is a multiplayer HTML5 Ouija board running on Node.js.
+[![CircleCI](https://circleci.com/gh/Anders-E/Ouija/tree/master.svg?style=svg)](https://circleci.com/gh/Anders-E/Ouija/tree/master)\
+Ouija is a multiplayer Ouija board for the web.
 <img src="/screenshot.png" width="600">
 
 ## Installation
