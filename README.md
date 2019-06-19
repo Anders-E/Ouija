@@ -20,7 +20,7 @@ Once the server tells you it is up and running, open `http://localhost:3000/` in
 
 ## Contributing
 
-### Build & Run Ouija for development (auto-reload on changes, ESLint, Prettier)
+### Build & Run Ouija for development
 ```
 $ git clone https://github.com/Anders-E/Ouija.git
 $ cd Ouija
@@ -36,6 +36,14 @@ And finally in another terminal run the Node.js watcher:
 
 Once the server is up and running, open `http://localhost:3000/` in your browser.
 
+### Code Style, ESLint & Prettier
+
+*TODO*
+
+### Visual Studio Code
+
+*TODO*
+
 ## License
 
-TODO
+*TODO*
