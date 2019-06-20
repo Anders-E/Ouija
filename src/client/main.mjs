@@ -1,5 +1,6 @@
 import { Vector2 } from './vector2.mjs';
 import { EventSystem, Event } from './eventSystem.mjs';
+// import {Label, Button} from './ui.mjs';
 
 function mouseDown(e) {
     window.mouseDown = true;
@@ -9,9 +10,97 @@ function mouseUp(e) {
     window.mouseDown = false;
 }
 
+function enterLoadingScreen() {
+  unfade(document.getElementById("loading-screen"))
+
+  //TODO: Match-making
+  //FIXME: Currently only setting up renderer
+    window.scene = new THREE.Scene();
+
+    window.renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+
+    //TODO: Zoom?
+    // window.addEventListener('wheel', mouseWheel, false)
+
+    window.clock = new THREE.Clock();
+
+    initScene(scene, renderer);
+    // initUI(renderer);
+    initSounds();
+
+    window.lightningListener = new THREE.AudioListener();
+    window.LightningSound = new THREE.Audio(lightningListener);
+    window.lightningAudioLoader = new THREE.AudioLoader();
+
+    window.accelerateDistance = 1;
+    window.accelerateSpeed = 0.5;
+
+    //TODO: Call start session when session has been found instead
+    setTimeout(function() { startSession(); }, 5000);
+}
+
+function startSession() {
+    console.log("KEKE");
+    document.body.appendChild(renderer.domElement);
+    window.eventSystem = new EventSystem();
+    window.eventSystem.addEvent(
+        new Event(() => {
+            window.lightningLight.intensity = 100;
+            window.lightningAudioLoader.load('res/lightning.mp3', buffer => {
+                LightningSound.setBuffer(buffer);
+                LightningSound.setLoop(false);
+                LightningSound.setVolume(0.1);
+                LightningSound.play();
+            });
+        }, 0.001)
+    );
+
+      window.addEventListener('mousemove', setMousePosition, false);
+      window.addEventListener('mousedown', mouseDown, false);
+      window.addEventListener('mouseup', mouseUp, true);
+
+      animate();
+      fade(document.getElementById("loading-screen"));
+}
+
+function fade(element) {
+    var op = 1;  // initial opacity
+    //in ms
+    var rate = 2;
+    var timer = setInterval(function () {
+        if (op <= 0.01 * rate) {
+            clearInterval(timer);
+            element.style.display = 'none';
+        }
+        element.style.opacity = op;
+        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+        op -= op * 0.01 * rate;
+    }, rate);
+}
+
+function unfade(element) {
+    var op = 0.1;  // initial opacity
+    var rate = 2;
+    element.style.display = 'block';
+    var timer = setInterval(function () {
+        if (op >= (1 - 0.01 * rate)){
+            clearInterval(timer);
+        }
+        element.style.opacity = op;
+        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+        op += op * 0.01 * rate;
+    }, rate);
+}
+
+function endSession() {
+  //TODO: Do something here, perhaps transition back to main menu
+}
+
 function initScene(scene, renderer) {
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(new THREE.Color(0.02, 0.04, 0.06));
+    renderer.setClearColor(new THREE.Color('#050a0f'));
 
     //cameras
     window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -92,6 +181,10 @@ function initScene(scene, renderer) {
             window.mixer = new THREE.AnimationMixer(camera);
             var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
             action.timeScale = 2; // add this
+            mixer.addEventListener( 'finished', function(e) {
+              console.log('hihiihih');
+              unfade(document.getElementById("game"));
+            }); //
 
             action.setLoop(THREE.LoopOnce);
             action.clampWhenFinished = true;
@@ -141,45 +234,15 @@ function setMousePosition(e) {
 
 function main() {
     /* EXAMPLE THREE JS */
-    window.scene = new THREE.Scene();
 
-    window.renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
-
-    //TODO: Zoom?
-    // window.addEventListener('wheel', mouseWheel, false)
-    document.body.appendChild(renderer.domElement);
-
-    window.clock = new THREE.Clock();
-
-    initScene(scene, renderer);
-
-    initSounds();
-
-    window.lightningListener = new THREE.AudioListener();
-    window.LightningSound = new THREE.Audio(lightningListener);
-    window.lightningAudioLoader = new THREE.AudioLoader();
-
-    window.eventSystem = new EventSystem();
-    window.eventSystem.addEvent(
-        new Event(() => {
-            window.lightningLight.intensity = 100;
-            window.lightningAudioLoader.load('res/lightning.mp3', buffer => {
-                LightningSound.setBuffer(buffer);
-                LightningSound.setLoop(false);
-                LightningSound.setVolume(0.1);
-                LightningSound.play();
-            });
-        }, 0.001)
-    );
-
-    window.accelerateDistance = 1;
-    window.accelerateSpeed = 0.5;
-
-    window.addEventListener('mousemove', setMousePosition, false);
-    window.addEventListener('mousedown', mouseDown, false);
-    window.addEventListener('mouseup', mouseUp, true);
+    //TODO: Add buttons here
+    window.findSessionButton = document.getElementById("findSession");
+    findSessionButton.addEventListener('click', () => {
+      console.log("LOL");
+      fade(document.getElementById("menu"));
+      enterLoadingScreen();
+      // startSession();
+    });
 }
 
 function update(dt) {
@@ -227,8 +290,10 @@ function animate() {
     // window.controls.update();
 
     renderer.render(window.scene, window.camera);
+    //render UI
+    // ui.render(renderer);
+
     requestAnimationFrame(animate);
 }
 
 main();
-animate();
