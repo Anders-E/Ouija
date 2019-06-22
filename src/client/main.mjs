@@ -1,4 +1,3 @@
-import { Vector2 } from './vector2.mjs';
 import { EventSystem, Event } from './eventSystem.mjs';
 
 function mouseDown(e) {
@@ -140,7 +139,7 @@ function initSounds() {
 }
 
 function setMousePosition(e) {
-    window.mouse = new Vector2((e.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
+    window.mouse = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
 }
 
 function main() {
@@ -208,7 +207,7 @@ function update() {
             var point = intersects[0].point;
 
             //emit point to Server
-            window.socket.emit('player_marker_pos', new Vector2(point.x, point.z));
+            window.socket.emit('player_marker_pos', new THREE.Vector2(point.x, point.z));
             // console.log(point.x + ";" + point.y + ";" + point.z);
         }
     }
