@@ -11,9 +11,9 @@ function mouseUp(e) {
 }
 
 function enterLoadingScreen() {
-  unfade(document.getElementById("loading-screen"));
+    unfade(document.getElementById('loading-screen'));
 
-  //TODO: Match-making; Currently only setting up renderer
+    //TODO: Match-making; Currently only setting up renderer
     window.scene = new THREE.Scene();
 
     window.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -22,13 +22,13 @@ function enterLoadingScreen() {
     // initUI(renderer);
     initSounds();
 
-
-
     window.accelerateDistance = 1;
     window.accelerateSpeed = 0.5;
 
     //TODO: Call start session when session has been found instead
-    setTimeout(function() { startSession(); }, 5000);
+    setTimeout(function() {
+        startSession();
+    }, 5000);
 }
 
 function startSession() {
@@ -47,26 +47,26 @@ function startSession() {
         }, 0.001)
     );
 
-      window.addEventListener('mousemove', setMousePosition, false);
-      window.addEventListener('mousedown', mouseDown, false);
-      window.addEventListener('mouseup', mouseUp, true);
+    window.addEventListener('mousemove', setMousePosition, false);
+    window.addEventListener('mousedown', mouseDown, false);
+    window.addEventListener('mouseup', mouseUp, true);
 
-      animate();
+    animate();
 
-      //Slight delay before fading out the loading screen
-      setTimeout(function() {
-        fade(document.getElementById("loading-screen"));
+    //Slight delay before fading out the loading screen
+    setTimeout(function() {
+        fade(document.getElementById('loading-screen'));
         unfade(renderer.domElement);
-     }, 1000);
+    }, 1000);
 }
 
 //duration in ms
-function showMessage (message, duration) {
-  eventText.innerHTML = message;
-  unfade(eventText);
-  setTimeout(function() {
-    fade(eventText);
- }, duration * 1000);
+function showMessage(message, duration) {
+    eventText.innerHTML = message;
+    unfade(eventText);
+    setTimeout(function() {
+        fade(eventText);
+    }, duration * 1000);
 }
 
 function fade(element) {
@@ -78,7 +78,7 @@ function unfade(element) {
 }
 
 function endSession() {
-  //TODO: Do something here, perhaps transition back to main menu
+    //TODO: Do something here, perhaps transition back to main menu
 }
 
 function initScene(scene, renderer) {
@@ -173,9 +173,9 @@ function initScene(scene, renderer) {
             window.mixer = new THREE.AnimationMixer(camera);
             var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
             action.timeScale = 2; // add this
-            mixer.addEventListener( 'finished', function(e) {
-              console.log('hihiihih');
-              unfade(document.getElementById("game"));
+            mixer.addEventListener('finished', function(e) {
+                console.log('hihiihih');
+                unfade(document.getElementById('game'));
             }); //
 
             action.setLoop(THREE.LoopOnce);
@@ -232,20 +232,20 @@ function main() {
     /* EXAMPLE THREE JS */
 
     //TODO: Add buttons here
-    window.findSessionButton = document.getElementById("findSession");
-    window.mainMenu = document.getElementById("menu");
-    window.loadingScreen = document.getElementById("loading-screen");
-    window.gameUI = document.getElementById("game");
-    window.eventText = document.getElementById("eventText");
+    window.findSessionButton = document.getElementById('findSession');
+    window.mainMenu = document.getElementById('menu');
+    window.loadingScreen = document.getElementById('loading-screen');
+    window.gameUI = document.getElementById('game');
+    window.eventText = document.getElementById('eventText');
 
     $(window.loadingScreen).hide();
     $(window.gameUI).hide();
     $(window.eventText).hide();
 
     findSessionButton.addEventListener('click', () => {
-      console.log("LOL");
-      fade(document.getElementById("menu"));
-      enterLoadingScreen();
+        console.log('LOL');
+        fade(document.getElementById('menu'));
+        enterLoadingScreen();
     });
 }
 
@@ -276,12 +276,12 @@ function update() {
 }
 
 function onPlayerJoined() {
-  window.effectSound.play();
-  showMessage("It feels as though someone is watching you...", 5);
+    window.effectSound.play();
+    showMessage('It feels as though someone is watching you...', 5);
 }
 
 function onPlayerLeft() {
-  showMessage("The tension somehow feels lighter...", 5);
+    showMessage('The tension somehow feels lighter...', 5);
 }
 
 function animate() {
