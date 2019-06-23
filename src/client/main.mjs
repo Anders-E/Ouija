@@ -81,6 +81,10 @@ function endSession() {
   //TODO: Do something here, perhaps transition back to main menu
 }
 
+function onPlayerJoined() {
+    window.effectSound.play();
+}
+
 function initScene(scene, renderer) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
@@ -249,7 +253,7 @@ function main() {
     });
 }
 
-function update(dt) {
+function update() {
     //events
     var rand = THREE.Math.randFloat(0.0, 1.0);
     window.eventSystem.getEvents().forEach(event => {
@@ -286,7 +290,7 @@ function onPlayerLeft() {
 
 function animate() {
     var delta = clock.getDelta();
-    update(delta);
+    update();
     window.mixer.update(delta);
 
     camera.lookAt(new THREE.Vector3(0, 0, 0));
