@@ -81,10 +81,6 @@ function endSession() {
   //TODO: Do something here, perhaps transition back to main menu
 }
 
-function onPlayerJoined() {
-    window.effectSound.play();
-}
-
 function initScene(scene, renderer) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
