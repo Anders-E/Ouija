@@ -62,7 +62,6 @@ function startSession() {
 
 //duration in ms
 function showMessage (message, duration) {
-  var eventText = document.getElementById("eventText");
   eventText.innerHTML = message;
   unfade(eventText);
   setTimeout(function() {
@@ -237,9 +236,11 @@ function main() {
     window.mainMenu = document.getElementById("menu");
     window.loadingScreen = document.getElementById("loading-screen");
     window.gameUI = document.getElementById("game");
+    window.eventText = document.getElementById("eventText");
 
     $(window.loadingScreen).hide();
     $(window.gameUI).hide();
+    $(window.eventText).hide();
 
     findSessionButton.addEventListener('click', () => {
       console.log("LOL");
