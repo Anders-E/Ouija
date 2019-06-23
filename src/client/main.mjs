@@ -1,5 +1,6 @@
 import { Vector2 } from './vector2.mjs';
 import { EventSystem, Event } from './eventSystem.mjs';
+// import {Label, Button} from './ui.mjs';
 
 function mouseDown(e) {
     window.mouseDown = true;
@@ -9,13 +10,87 @@ function mouseUp(e) {
     window.mouseDown = false;
 }
 
+function enterLoadingScreen() {
+  unfade(document.getElementById("loading-screen"));
+
+  //TODO: Match-making; Currently only setting up renderer
+    window.scene = new THREE.Scene();
+
+    window.renderer = new THREE.WebGLRenderer({ antialias: true });
+
+    initScene(scene, renderer);
+    // initUI(renderer);
+    initSounds();
+
+
+
+    window.accelerateDistance = 1;
+    window.accelerateSpeed = 0.5;
+
+    //TODO: Call start session when session has been found instead
+    setTimeout(function() { startSession(); }, 5000);
+}
+
+function startSession() {
+    document.body.appendChild(renderer.domElement);
+    $(renderer.domElement).hide();
+    window.eventSystem = new EventSystem();
+    window.eventSystem.addEvent(
+        new Event(() => {
+            window.lightningLight.intensity = 100;
+            window.lightningAudioLoader.load('res/lightning.mp3', buffer => {
+                LightningSound.setBuffer(buffer);
+                LightningSound.setLoop(false);
+                LightningSound.setVolume(0.1);
+                LightningSound.play();
+            });
+        }, 0.001)
+    );
+
+      window.addEventListener('mousemove', setMousePosition, false);
+      window.addEventListener('mousedown', mouseDown, false);
+      window.addEventListener('mouseup', mouseUp, true);
+
+      animate();
+
+      //Slight delay before fading out the loading screen
+      setTimeout(function() {
+        fade(document.getElementById("loading-screen"));
+        unfade(renderer.domElement);
+     }, 1000);
+}
+
+//duration in ms
+function showMessage (message, duration) {
+  eventText.innerHTML = message;
+  unfade(eventText);
+  setTimeout(function() {
+    fade(eventText);
+ }, duration * 1000);
+}
+
+function fade(element) {
+    $(element).fadeOut(1000);
+}
+
+function unfade(element) {
+    $(element).fadeIn(1000);
+}
+
+function endSession() {
+  //TODO: Do something here, perhaps transition back to main menu
+}
+
 function onPlayerJoined() {
     window.effectSound.play();
 }
 
 function initScene(scene, renderer) {
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(new THREE.Color(0.02, 0.04, 0.06));
+    renderer.setClearColor(new THREE.Color('#050a0f'));
 
     //cameras
     window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -27,6 +102,8 @@ function initScene(scene, renderer) {
     // camera.lookAt(new THREE.Vector3(0,0,0));
 
     scene.add(camera);
+
+    window.clock = new THREE.Clock();
 
     window.mixer = new THREE.AnimationMixer();
 
@@ -72,7 +149,6 @@ function initScene(scene, renderer) {
 
                     if (node.name == 'Marker') {
                         window.marker = node;
-                        // window.marker.position.set(0, 0, 0);
 
                         //socket setup
                         window.socket = io();
@@ -88,6 +164,11 @@ function initScene(scene, renderer) {
                                 console.log('Player ' + id + ' connected');
                                 onPlayerJoined();
                             });
+
+                            socket.on('playerLeft', id => {
+                                console.log('Player ' + id + ' left');
+                                onPlayerLeft();
+                            });
                         });
                     }
                 }
@@ -96,6 +177,10 @@ function initScene(scene, renderer) {
             window.mixer = new THREE.AnimationMixer(camera);
             var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
             action.timeScale = 2; // add this
+            mixer.addEventListener( 'finished', function(e) {
+              console.log('hihiihih');
+              unfade(document.getElementById("game"));
+            }); //
 
             action.setLoop(THREE.LoopOnce);
             action.clampWhenFinished = true;
@@ -137,6 +222,10 @@ function initSounds() {
         effectSound.setBuffer(buffer);
         effectSound.setLoop(false);
     });
+
+    window.lightningListener = new THREE.AudioListener();
+    window.LightningSound = new THREE.Audio(lightningListener);
+    window.lightningAudioLoader = new THREE.AudioLoader();
 }
 
 function setMousePosition(e) {
@@ -145,45 +234,23 @@ function setMousePosition(e) {
 
 function main() {
     /* EXAMPLE THREE JS */
-    window.scene = new THREE.Scene();
 
-    window.renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+    //TODO: Add buttons here
+    window.findSessionButton = document.getElementById("findSession");
+    window.mainMenu = document.getElementById("menu");
+    window.loadingScreen = document.getElementById("loading-screen");
+    window.gameUI = document.getElementById("game");
+    window.eventText = document.getElementById("eventText");
 
-    //TODO: Zoom?
-    // window.addEventListener('wheel', mouseWheel, false)
-    document.body.appendChild(renderer.domElement);
+    $(window.loadingScreen).hide();
+    $(window.gameUI).hide();
+    $(window.eventText).hide();
 
-    window.clock = new THREE.Clock();
-
-    initScene(scene, renderer);
-
-    initSounds();
-
-    window.lightningListener = new THREE.AudioListener();
-    window.LightningSound = new THREE.Audio(lightningListener);
-    window.lightningAudioLoader = new THREE.AudioLoader();
-
-    window.eventSystem = new EventSystem();
-    window.eventSystem.addEvent(
-        new Event(() => {
-            window.lightningLight.intensity = 100;
-            window.lightningAudioLoader.load('res/lightning.mp3', buffer => {
-                LightningSound.setBuffer(buffer);
-                LightningSound.setLoop(false);
-                LightningSound.setVolume(0.1);
-                LightningSound.play();
-            });
-        }, 0.001)
-    );
-
-    window.accelerateDistance = 1;
-    window.accelerateSpeed = 0.5;
-
-    window.addEventListener('mousemove', setMousePosition, false);
-    window.addEventListener('mousedown', mouseDown, false);
-    window.addEventListener('mouseup', mouseUp, true);
+    findSessionButton.addEventListener('click', () => {
+      console.log("LOL");
+      fade(document.getElementById("menu"));
+      enterLoadingScreen();
+    });
 }
 
 function update() {
@@ -203,15 +270,22 @@ function update() {
         raycaster.setFromCamera(window.mouse, window.camera);
         var intersects = [];
         window.boardCollider.raycast(raycaster, intersects);
-        // var intersects = raycaster.intersectObject(window.boardCollider, false);
         if (intersects.length > 0) {
             var point = intersects[0].point;
 
             //emit point to Server
             window.socket.emit('player_marker_pos', new Vector2(point.x, point.z));
-            // console.log(point.x + ";" + point.y + ";" + point.z);
         }
     }
+}
+
+function onPlayerJoined() {
+  window.effectSound.play();
+  showMessage("It feels as though someone is watching you...", 5);
+}
+
+function onPlayerLeft() {
+  showMessage("The tension somehow feels lighter...", 5);
 }
 
 function animate() {
@@ -231,4 +305,3 @@ function animate() {
 }
 
 main();
-animate();

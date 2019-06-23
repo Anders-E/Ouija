@@ -1,12 +1,89 @@
 html, body {
     overflow: hidden;
     margin: 0px;
+    background-color:#050a0f;
 }
 
-#ouijaCanvas {
-    /* background-image: url(/res/board.svg); */
-    background-size: contain;
-    /* background-repeat: no-repeat; */
-    /*cursor: none;*/
-    border:1px solid #000000;
+.ui * {
+  z-index: 99;
+
+  font-family: "Garamond";
+  color: #E0E0E0;
+}
+
+.menu > * {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.loading-screen > * {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.game > * {
+  position: absolute;
+}
+
+.event {
+  text-align: right;
+  font-size:30px;
+  color:#E0E0E0;
+
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+}
+
+.logo {
+  width:300px;
+}
+
+.loading-icon {
+  transform: rotate(-150deg) translate(0%, -20%);
+  width:50px;
+}
+
+.ui-text {
+  font-size: 30px;
+
+  /* padding: 5px; */
+  background-color: Transparent;
+  border-color: Transparent;
+
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+}
+
+.ui-text-small {
+  font-size: 15px;
+
+  /* padding: 5px; */
+  background-color: Transparent;
+  border-color: Transparent;
+
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+}
+
+button {
+  font-size: 30px;
+}
+
+button:hover {
+  color: #FFFFFF;
+}
+
+button:active {
+  outline: none;
+  border: none;
+}
+
+button:focus {
+  outline:0;
 }
