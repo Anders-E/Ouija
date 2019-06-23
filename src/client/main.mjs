@@ -1,5 +1,10 @@
 import { EventSystem, Event } from './eventSystem.mjs';
 
+
+function setMousePosition(e) {
+    window.mouse = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
+}
+
 function mouseDown(e) {
     window.mouseDown = true;
 }
@@ -12,11 +17,7 @@ function onPlayerJoined() {
     window.effectSound.play();
 }
 
-function initScene(scene, renderer) {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(new THREE.Color(0.02, 0.04, 0.06));
-
-    //cameras
+function setUpCameras(scene) {
     window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 5, 7);
     camera.rotation.set(-90, 0, 0);
@@ -24,16 +25,11 @@ function initScene(scene, renderer) {
     window.maxCameraPosition = new THREE.Vector3(0, 5, 7);
     window.zoomFactor = 0.5;
     // camera.lookAt(new THREE.Vector3(0,0,0));
-
     scene.add(camera);
+}
 
-    window.mixer = new THREE.AnimationMixer();
-
-    //light
-    // var ambientLight = new THREE.AmbientLight( 0xffffff, 1000); // soft white light
-    // scene.add( ambientLight );
-
-    var light = new THREE.PointLight(0x66b2ff, 3);
+function setUpLight(scene) {
+    let light = new THREE.PointLight(0x66b2ff, 3);
     light.position.set(0, 2, 0);
 
     scene.add(light);
@@ -45,9 +41,31 @@ function initScene(scene, renderer) {
     lightningLight.shadow.mapSize.height = 1024 * 4;
 
     scene.add(lightningLight);
+}
+
+function addMouseListeners() {
+    window.addEventListener('mousemove', setMousePosition, false);
+    window.addEventListener('mousedown', mouseDown, false);
+    window.addEventListener('mouseup', mouseUp, true);
+}
+
+function initScene(scene, renderer) {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(new THREE.Color(0.02, 0.04, 0.06));
+
+  
+    setUpCameras(scene);
+
+    window.mixer = new THREE.AnimationMixer();
+
+
+    setUpLight(scene);
+    //light
+    // var ambientLight = new THREE.AmbientLight( 0xffffff, 1000); // soft white light
+    // scene.add( ambientLight );    
 
     //geometry
-    var loader = new THREE.GLTFLoader();
+    let loader = new THREE.GLTFLoader();
 
     // Load a glTF resource
     loader.load(
@@ -93,7 +111,7 @@ function initScene(scene, renderer) {
             });
             window.clips = gltf.animations;
             window.mixer = new THREE.AnimationMixer(camera);
-            var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
+            let action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
             action.timeScale = 2; // add this
 
             action.setLoop(THREE.LoopOnce);
@@ -138,9 +156,6 @@ function initSounds() {
     });
 }
 
-function setMousePosition(e) {
-    window.mouse = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
-}
 
 function main() {
     /* EXAMPLE THREE JS */
@@ -165,6 +180,8 @@ function main() {
     window.lightningAudioLoader = new THREE.AudioLoader();
 
     window.eventSystem = new EventSystem();
+
+
     window.eventSystem.addEvent(
         new Event(() => {
             window.lightningLight.intensity = 100;
@@ -180,14 +197,13 @@ function main() {
     window.accelerateDistance = 1;
     window.accelerateSpeed = 0.5;
 
-    window.addEventListener('mousemove', setMousePosition, false);
-    window.addEventListener('mousedown', mouseDown, false);
-    window.addEventListener('mouseup', mouseUp, true);
+    addMouseListeners();
+  
 }
 
 function update() {
     //events
-    var rand = THREE.Math.randFloat(0.0, 1.0);
+    let rand = THREE.Math.randFloat(0.0, 1.0);
     window.eventSystem.getEvents().forEach(event => {
         if (rand > event.getRate()) {
             // console.log(event.getRate());
@@ -198,13 +214,13 @@ function update() {
         }
     });
     if (window.mouseDown) {
-        var raycaster = new THREE.Raycaster();
+        let raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(window.mouse, window.camera);
-        var intersects = [];
+        let intersects = [];
         window.boardCollider.raycast(raycaster, intersects);
         // var intersects = raycaster.intersectObject(window.boardCollider, false);
         if (intersects.length > 0) {
-            var point = intersects[0].point;
+            let point = intersects[0].point;
 
             //emit point to Server
             window.socket.emit('player_marker_pos', new THREE.Vector2(point.x, point.z));
@@ -214,7 +230,7 @@ function update() {
 }
 
 function animate() {
-    var delta = clock.getDelta();
+    let delta = clock.getDelta();
     update();
     window.mixer.update(delta);
 
