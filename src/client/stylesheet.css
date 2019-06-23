@@ -13,10 +13,12 @@ html, body {
 
 .menu > * {
   position: absolute;
+  transform: translateX(-50%);
 }
 
 .loading-screen > * {
   position: absolute;
+  transform: translateX(-50%);
 }
 
 .game > * {
@@ -27,6 +29,7 @@ html, body {
   text-align: right;
   font-size:30px;
   color:#E0E0E0;
+  opacity:0;
 
   -webkit-user-select: none; /* Safari 3.1+ */
   -moz-user-select: none; /* Firefox 2+ */
@@ -78,13 +81,10 @@ button:hover {
 }
 
 button:active {
-outline: none;
-border: none;
+  outline: none;
+  border: none;
 }
 
-button:focus {outline:0;}
-
-@keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+button:focus {
+  outline:0;
 }

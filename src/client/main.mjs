@@ -11,28 +11,18 @@ function mouseUp(e) {
 }
 
 function enterLoadingScreen() {
-  unfade(document.getElementById("loading-screen"))
+  unfade(document.getElementById("loading-screen"));
 
-  //TODO: Match-making
-  //FIXME: Currently only setting up renderer
+  //TODO: Match-making; Currently only setting up renderer
     window.scene = new THREE.Scene();
 
     window.renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
-
-    //TODO: Zoom?
-    // window.addEventListener('wheel', mouseWheel, false)
-
-    window.clock = new THREE.Clock();
 
     initScene(scene, renderer);
     // initUI(renderer);
     initSounds();
 
-    window.lightningListener = new THREE.AudioListener();
-    window.LightningSound = new THREE.Audio(lightningListener);
-    window.lightningAudioLoader = new THREE.AudioLoader();
+
 
     window.accelerateDistance = 1;
     window.accelerateSpeed = 0.5;
@@ -42,8 +32,8 @@ function enterLoadingScreen() {
 }
 
 function startSession() {
-    console.log("KEKE");
     document.body.appendChild(renderer.domElement);
+    $(renderer.domElement).hide();
     window.eventSystem = new EventSystem();
     window.eventSystem.addEvent(
         new Event(() => {
@@ -62,36 +52,30 @@ function startSession() {
       window.addEventListener('mouseup', mouseUp, true);
 
       animate();
-      fade(document.getElementById("loading-screen"));
+
+      //Slight delay before fading out the loading screen
+      setTimeout(function() {
+        fade(document.getElementById("loading-screen"));
+        unfade(renderer.domElement);
+     }, 1000);
+}
+
+//duration in ms
+function showMessage (message, duration) {
+  var eventText = document.getElementById("eventText");
+  eventText.innerHTML = message;
+  unfade(eventText);
+  setTimeout(function() {
+    fade(eventText);
+ }, duration * 1000);
 }
 
 function fade(element) {
-    var op = 1;  // initial opacity
-    //in ms
-    var rate = 2;
-    var timer = setInterval(function () {
-        if (op <= 0.01 * rate) {
-            clearInterval(timer);
-            element.style.display = 'none';
-        }
-        element.style.opacity = op;
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op -= op * 0.01 * rate;
-    }, rate);
+    $(element).fadeOut(1000);
 }
 
 function unfade(element) {
-    var op = 0.1;  // initial opacity
-    var rate = 2;
-    element.style.display = 'block';
-    var timer = setInterval(function () {
-        if (op >= (1 - 0.01 * rate)){
-            clearInterval(timer);
-        }
-        element.style.opacity = op;
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op += op * 0.01 * rate;
-    }, rate);
+    $(element).fadeIn(1000);
 }
 
 function endSession() {
@@ -99,6 +83,9 @@ function endSession() {
 }
 
 function initScene(scene, renderer) {
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(new THREE.Color('#050a0f'));
 
@@ -112,6 +99,8 @@ function initScene(scene, renderer) {
     // camera.lookAt(new THREE.Vector3(0,0,0));
 
     scene.add(camera);
+
+    window.clock = new THREE.Clock();
 
     window.mixer = new THREE.AnimationMixer();
 
@@ -157,7 +146,6 @@ function initScene(scene, renderer) {
 
                     if (node.name == 'Marker') {
                         window.marker = node;
-                        // window.marker.position.set(0, 0, 0);
 
                         //socket setup
                         window.socket = io();
@@ -172,6 +160,11 @@ function initScene(scene, renderer) {
                             socket.on('playerJoined', id => {
                                 console.log('Player ' + id + ' connected');
                                 onPlayerJoined();
+                            });
+
+                            socket.on('playerLeft', id => {
+                                console.log('Player ' + id + ' left');
+                                onPlayerLeft();
                             });
                         });
                     }
@@ -226,6 +219,10 @@ function initSounds() {
         effectSound.setBuffer(buffer);
         effectSound.setLoop(false);
     });
+
+    window.lightningListener = new THREE.AudioListener();
+    window.LightningSound = new THREE.Audio(lightningListener);
+    window.lightningAudioLoader = new THREE.AudioLoader();
 }
 
 function setMousePosition(e) {
@@ -237,11 +234,17 @@ function main() {
 
     //TODO: Add buttons here
     window.findSessionButton = document.getElementById("findSession");
+    window.mainMenu = document.getElementById("menu");
+    window.loadingScreen = document.getElementById("loading-screen");
+    window.gameUI = document.getElementById("game");
+
+    $(window.loadingScreen).hide();
+    $(window.gameUI).hide();
+
     findSessionButton.addEventListener('click', () => {
       console.log("LOL");
       fade(document.getElementById("menu"));
       enterLoadingScreen();
-      // startSession();
     });
 }
 
@@ -262,19 +265,22 @@ function update(dt) {
         raycaster.setFromCamera(window.mouse, window.camera);
         var intersects = [];
         window.boardCollider.raycast(raycaster, intersects);
-        // var intersects = raycaster.intersectObject(window.boardCollider, false);
         if (intersects.length > 0) {
             var point = intersects[0].point;
 
             //emit point to Server
             window.socket.emit('player_marker_pos', new Vector2(point.x, point.z));
-            // console.log(point.x + ";" + point.y + ";" + point.z);
         }
     }
 }
 
 function onPlayerJoined() {
   window.effectSound.play();
+  showMessage("It feels as though someone is watching you...", 5);
+}
+
+function onPlayerLeft() {
+  showMessage("The tension somehow feels lighter...", 5);
 }
 
 function animate() {
@@ -290,9 +296,6 @@ function animate() {
     // window.controls.update();
 
     renderer.render(window.scene, window.camera);
-    //render UI
-    // ui.render(renderer);
-
     requestAnimationFrame(animate);
 }
 

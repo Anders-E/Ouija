@@ -11,44 +11,38 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="/lib/three.js"></script>
         <script src="/lib/GLTFLoader.js"></script>
-        <script src="/lib/three-ui.min.js"></script>
-        <script src="/lib/asset-loader.min.js"></script>
+        <script src="/lib/jquery-3.4.1.min.js"></script>
 
         <!-- Ouija -->
         <script type="module" src="/main.mjs"></script>
 
         <div style="left: 50%; top: 50%;" class="ui">
           <div id="menu" class="menu">
-            <img style="left: 50%; top: 30%" class="logo" src="/res/logo.svg">
+            <img style="left: 50%; top: 20%" class="logo" src="/res/logo.svg">
 
             <button style="left: 50%; top: 50%" id="findSession" class="ui-text">Find session</button>
             <button style="left: 50%; top: 55%" id="joinExistingSession" class="ui-text">Join session</button>
             <button style="left: 50%; top: 60%" id="settings" class="ui-text">Settings</button>
-
-            <p style="left: 50%; top: 90%" id="credits" class="ui-text-small">Creative UX, 2018</p>
-
-            <!-- <button style="left: 5%; top: 80%" id="leave">Settings</button> -->
+            <p style="left: 50%; top: 90%" id="credits" class="ui-text-small">
+              Creative UX, 2018
+            </p>
           </div>
 
-          <div style="opacity:0" id="loading-screen" class="loading-screen">
-            <img style="left: 45%; top: 30%" class="loading-icon" src="/res/marker_icon.svg">
-            <p style="left: 50%; top: 30%" id="loading-screen-text" class="ui-text">
+          <div  id="loading-screen" class="loading-screen">
+            <img style="left: 5%;" class="loading-icon" src="/res/marker_icon.svg">
+            <p style="left: 20%;" id="loading-screen-text" class="ui-text">
                 Finding session...
             </p>
-            <p style="left: 50%; top: 35%" class="ui-text-small">
+            <p style="left: 20%; top: 5%" class="ui-text-small">
                 Don't forget to turn off the lights
             </p>
           </div>
 
-          <div style="opacity:0" id="game" class="game">
-            <!-- Logo -->
-            <img style="left: 5%; top: 5%" class="logo" src="/res/logo.svg">
-            <!-- UI -->
+          <div id="game" class="game">
             <button style="left: 5%; top: 75%" id="about"  class="ui-text">About</button>
             <button style="left: 5%; top: 80%" id="settings"  class="ui-text">Settings</button>
             <button style="left: 5%; top: 90%" id="leave"  class="ui-text">Leave séance</button>
-
-            <p style="right: 5%; top: 5%" id="eventText" class="event">
+            <p style="left: 5%; top: 0%" id="eventText" class="event">
                 You feel as though someone is watching you...
             </p>
         </div>
