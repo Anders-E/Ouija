@@ -1,4 +1,8 @@
-Sounds
+# Credits
+
+This document contains any acknowledgements regarding assets used in Ouija that are not licensed under the same license as Ouija itself.
+
+### Sounds
 
 "Windy, creaky old house ambience" by pfranzen
 https://freesound.org/people/pfranzen/sounds/393808/
