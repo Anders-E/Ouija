@@ -6,7 +6,7 @@ html, body {
 
 .ui * {
     z-index: 99;
-    
+
     font-family: "Garamond";
     color: #E0E0E0;
 }
@@ -29,7 +29,7 @@ html, body {
     text-align: right;
     font-size:30px;
     color:#E0E0E0;
-    
+
     -webkit-user-select: none; /* Safari 3.1+ */
     -moz-user-select: none; /* Firefox 2+ */
     -ms-user-select: none; /* IE 10+ */
@@ -37,7 +37,9 @@ html, body {
 }
 
 .logo {
-    width:300px;
+    font-family: 'Cinzel Decorative';
+    font-weight: 700;
+    font-size:100px;
 }
 
 .loading-icon {
@@ -47,11 +49,11 @@ html, body {
 
 .ui-text {
     font-size: 30px;
-    
+
     /* padding: 5px; */
     background-color: Transparent;
     border-color: Transparent;
-    
+
     -webkit-user-select: none; /* Safari 3.1+ */
     -moz-user-select: none; /* Firefox 2+ */
     -ms-user-select: none; /* IE 10+ */
@@ -60,11 +62,11 @@ html, body {
 
 .ui-text-small {
     font-size: 15px;
-    
+
     /* padding: 5px; */
     background-color: Transparent;
     border-color: Transparent;
-    
+
     -webkit-user-select: none; /* Safari 3.1+ */
     -moz-user-select: none; /* Firefox 2+ */
     -ms-user-select: none; /* IE 10+ */
