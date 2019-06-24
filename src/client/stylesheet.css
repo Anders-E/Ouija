@@ -2,6 +2,7 @@ html, body {
     overflow: hidden;
     margin: 0px;
     background-color:#050a0f;
+    cursor: url('res/ui/cursor_lite.png') 4 2, auto;
 }
 
 .ui * {
@@ -14,6 +15,7 @@ html, body {
 .menu > * {
     position: absolute;
     transform: translateX(-50%);
+
 }
 
 .loading-screen > * {
@@ -79,6 +81,7 @@ button {
 
 button:hover {
     color: #FFFFFF;
+    cursor: url('res/ui/cursor_lite.png') 4 2, auto;
 }
 
 button:active {
