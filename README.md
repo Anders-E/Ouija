@@ -48,4 +48,6 @@ Once the server is up and running, open `http://localhost:3000/` in your browser
 
 Ouija is licensed under [The GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) © 2019 Anders Eriksson.
 
+For acknowledgements and licensing regarding third-party assets used in Ouija, see [CREDITS.md](https://github.com/Anders-E/Ouija/blob/master/CREDITS.md).
+
 Source files in the `src/client/lib` directory are third party libraries and as such, are not licensed as part of Ouija.
