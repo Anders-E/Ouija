@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import GLTFLoader from 'three-gltf-loader';
+import io from 'socket.io-client';
 
 import { Vector2 } from './vector2.mjs';
 import { EventSystem, Event } from './eventSystem.mjs';
