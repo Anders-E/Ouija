@@ -44,4 +44,5 @@ io.on(
 game.play();
 
 // const server: Server =
-httpServer.listen(process.env.port || 3000, (): Logger => logger.info({ message: 'Ouija listening on port 3000' }));
+const port = process.env.port || 3000;
+httpServer.listen(port, (): Logger => logger.info({ message: `Ouija listening on port ${port}` }));
