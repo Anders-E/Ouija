@@ -138,39 +138,37 @@ function initScene(scene, renderer) {
 
             //activate shadows for objects in scene
             gltf.scene.traverse(node => {
-                if (node instanceof THREE.Mesh) {
-                    node.castShadow = true;
-                    node.receiveShadow = true;
+                node.castShadow = true;
+                node.receiveShadow = true;
 
-                    if (node.name == 'BoardCollider') {
-                        window.boardCollider = node;
-                        window.boardCollider.visible = false;
-                    }
+                if (node.name == 'BoardCollider') {
+                    window.boardCollider = node;
+                    window.boardCollider.visible = false;
+                }
 
-                    if (node.name == 'Marker') {
-                        window.marker = node;
+                if (node.name == 'Marker') {
+                    window.marker = node;
 
-                        //socket setup
-                        window.socket = io();
-                        socket.on('connect', () => {
-                            console.log('connected to server');
-                            console.log(socket);
+                    //socket setup
+                    window.socket = io();
+                    socket.on('connect', () => {
+                        console.log('connected to server');
+                        console.log(socket);
 
-                            socket.on('game_marker_pos', pos => {
-                                window.marker.position.set(pos.x, 0, pos.y);
-                            });
-
-                            socket.on('playerJoined', id => {
-                                console.log('Player ' + id + ' connected');
-                                onPlayerJoined();
-                            });
-
-                            socket.on('playerLeft', id => {
-                                console.log('Player ' + id + ' left');
-                                onPlayerLeft();
-                            });
+                        socket.on('game_marker_pos', pos => {
+                            window.marker.position.set(pos.x, 0, pos.y);
                         });
-                    }
+
+                        socket.on('playerJoined', id => {
+                            console.log('Player ' + id + ' connected');
+                            onPlayerJoined();
+                        });
+
+                        socket.on('playerLeft', id => {
+                            console.log('Player ' + id + ' left');
+                            onPlayerLeft();
+                        });
+                    });
                 }
             });
             window.clips = gltf.animations;
@@ -178,7 +176,6 @@ function initScene(scene, renderer) {
             var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
             action.timeScale = 2; // add this
             mixer.addEventListener('finished', function(e) {
-                console.log('hihiihih');
                 unfade(document.getElementById('game'));
             }); //
 
@@ -247,7 +244,6 @@ function main() {
     $(window.eventText).hide();
 
     findSessionButton.addEventListener('click', () => {
-        console.log('LOL');
         fade(document.getElementById('menu'));
         enterLoadingScreen();
     });
