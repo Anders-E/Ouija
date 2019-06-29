@@ -1,3 +1,7 @@
+import * as THREE from 'three';
+import GLTFLoader from 'three-gltf-loader';
+import io from 'socket.io-client';
+
 import { Vector2 } from './vector2.mjs';
 import { EventSystem, Event } from './eventSystem.mjs';
 // import {Label, Button} from './ui.mjs';
@@ -121,7 +125,7 @@ function initScene(scene, renderer) {
     scene.add(lightningLight);
 
     //geometry
-    var loader = new THREE.GLTFLoader();
+    var loader = new GLTFLoader();
 
     // Load a glTF resource
     loader.load(
