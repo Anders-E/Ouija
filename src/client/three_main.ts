@@ -1,7 +1,7 @@
-import { PerspectiveCamera, Scene, BoxGeometry, MeshNormalMaterial, Mesh, WebGLRenderer } from './lib/three.js';
+import { PerspectiveCamera, Scene, BoxGeometry, MeshNormalMaterial, Mesh, WebGLRenderer } from 'three';
 
-var camera, scene, renderer;
-var geometry, material, mesh;
+let camera: any, scene: any, renderer: any;
+let geometry: any, material: any, mesh: any;
 
 function init() {
     camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);

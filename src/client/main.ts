@@ -2,15 +2,14 @@ import * as THREE from 'three';
 import GLTFLoader from 'three-gltf-loader';
 import io from 'socket.io-client';
 
-import { Vector2 } from './vector2.mjs';
-import { EventSystem, Event } from './eventSystem.mjs';
-// import {Label, Button} from './ui.mjs';
+import { Vector2 } from './vector2';
+import { EventSystem, Event } from './eventSystem';
 
-function mouseDown(e) {
+function mouseDown(e: MouseEvent) {
     window.mouseDown = true;
 }
 
-function mouseUp(e) {
+function mouseUp(e: MouseEvent) {
     window.mouseDown = false;
 }
 
@@ -22,7 +21,7 @@ function enterLoadingScreen() {
 
     window.renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    initScene(scene, renderer);
+    initScene(window.scene, window.renderer);
     // initUI(renderer);
     initSounds();
 
@@ -36,17 +35,17 @@ function enterLoadingScreen() {
 }
 
 function startSession() {
-    document.body.appendChild(renderer.domElement);
-    $(renderer.domElement).hide();
+    document.body.appendChild(window.renderer.domElement);
+    $(window.renderer.domElement).hide();
     window.eventSystem = new EventSystem();
     window.eventSystem.addEvent(
         new Event(() => {
             window.lightningLight.intensity = 100;
-            window.lightningAudioLoader.load('res/lightning.mp3', buffer => {
-                LightningSound.setBuffer(buffer);
-                LightningSound.setLoop(false);
-                LightningSound.setVolume(0.1);
-                LightningSound.play();
+            window.lightningAudioLoader.load('res/lightning.mp3', (buffer: any) => {
+                window.LightningSound.setBuffer(buffer);
+                window.LightningSound.setLoop(false);
+                window.LightningSound.setVolume(0.1);
+                window.LightningSound.play();
             });
         }, 0.001)
     );
@@ -60,24 +59,24 @@ function startSession() {
     //Slight delay before fading out the loading screen
     setTimeout(function() {
         fade(document.getElementById('loading-screen'));
-        unfade(renderer.domElement);
+        unfade(window.renderer.domElement);
     }, 1000);
 }
 
 //duration in ms
-function showMessage(message, duration) {
-    eventText.innerHTML = message;
-    unfade(eventText);
+function showMessage(message: string, duration: number) {
+    window.eventText.innerHTML = message;
+    unfade(window.eventText);
     setTimeout(function() {
-        fade(eventText);
+        fade(window.eventText);
     }, duration * 1000);
 }
 
-function fade(element) {
+function fade(element: HTMLElement) {
     $(element).fadeOut(1000);
 }
 
-function unfade(element) {
+function unfade(element: HTMLElement) {
     $(element).fadeIn(1000);
 }
 
@@ -85,7 +84,7 @@ function endSession() {
     //TODO: Do something here, perhaps transition back to main menu
 }
 
-function initScene(scene, renderer) {
+function initScene(scene: any, renderer: any) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
@@ -94,38 +93,38 @@ function initScene(scene, renderer) {
 
     //cameras
     window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 5, 7);
-    camera.rotation.set(-90, 0, 0);
+    window.camera.position.set(0, 5, 7);
+    window.camera.rotation.set(-90, 0, 0);
     window.minCameraPosition = new THREE.Vector3(0, 0, 0);
     window.maxCameraPosition = new THREE.Vector3(0, 5, 7);
     window.zoomFactor = 0.5;
     // camera.lookAt(new THREE.Vector3(0,0,0));
 
-    scene.add(camera);
+    scene.add(window.camera);
 
     window.clock = new THREE.Clock();
 
     window.mixer = new THREE.AnimationMixer();
 
     //light
-    // var ambientLight = new THREE.AmbientLight( 0xffffff, 1000); // soft white light
+    // let ambientLight = new THREE.AmbientLight( 0xffffff, 1000); // soft white light
     // scene.add( ambientLight );
 
-    var light = new THREE.PointLight(0x66b2ff, 3);
+    let light = new THREE.PointLight(0x66b2ff, 3);
     light.position.set(0, 2, 0);
 
     scene.add(light);
 
     window.lightningLight = new THREE.PointLight(0x66b2ff, 0);
-    lightningLight.position.set(3, 5, 12);
-    lightningLight.castShadow = true;
-    lightningLight.shadow.mapSize.width = 1024 * 4;
-    lightningLight.shadow.mapSize.height = 1024 * 4;
+    window.lightningLight.position.set(3, 5, 12);
+    window.lightningLight.castShadow = true;
+    window.lightningLight.shadow.mapSize.width = 1024 * 4;
+    window.lightningLight.shadow.mapSize.height = 1024 * 4;
 
-    scene.add(lightningLight);
+    scene.add(window.lightningLight);
 
     //geometry
-    var loader = new GLTFLoader();
+    let loader = new GLTFLoader();
 
     // Load a glTF resource
     loader.load(
@@ -151,20 +150,20 @@ function initScene(scene, renderer) {
 
                     //socket setup
                     window.socket = io();
-                    socket.on('connect', () => {
+                    window.socket.on('connect', () => {
                         console.log('connected to server');
-                        console.log(socket);
+                        console.log(window.socket);
 
-                        socket.on('game_marker_pos', pos => {
+                        window.socket.on('game_marker_pos', (pos: Vector2) => {
                             window.marker.position.set(pos.x, 0, pos.y);
                         });
 
-                        socket.on('playerJoined', id => {
+                        window.socket.on('playerJoined', (id: string) => {
                             console.log('Player ' + id + ' connected');
                             onPlayerJoined();
                         });
 
-                        socket.on('playerLeft', id => {
+                        window.socket.on('playerLeft', (id: string) => {
                             console.log('Player ' + id + ' left');
                             onPlayerLeft();
                         });
@@ -172,14 +171,14 @@ function initScene(scene, renderer) {
                 }
             });
             window.clips = gltf.animations;
-            window.mixer = new THREE.AnimationMixer(camera);
-            var action = mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
+            window.mixer = new THREE.AnimationMixer(window.camera);
+            let action = window.mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
             action.timeScale = 2; // add this
-            mixer.addEventListener('finished', function(e) {
+            window.mixer.addEventListener('finished', function(e) {
                 unfade(document.getElementById('game'));
             }); //
 
-            action.setLoop(THREE.LoopOnce);
+            action.setLoop(THREE.LoopOnce, 1);
             action.clampWhenFinished = true;
             action.play();
             // gltf.scenes; // Array<THREE.Scene>
@@ -207,21 +206,21 @@ function initSounds() {
 
     window.ambientSound = new THREE.Audio(audioListener);
     window.audioLoader = new THREE.AudioLoader();
-    window.audioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', function(buffer) {
-        ambientSound.setBuffer(buffer);
-        ambientSound.setLoop(false);
-        ambientSound.setVolume(0.05);
-        ambientSound.play();
+    window.audioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', (buffer) => {
+        window.ambientSound.setBuffer(buffer);
+        window.ambientSound.setLoop(false);
+        window.ambientSound.setVolume(0.05);
+        window.ambientSound.play();
     });
 
     window.effectSound = new THREE.Audio(audioListener);
-    window.audioLoader.load('res/excited horror sound.wav', function(buffer) {
-        effectSound.setBuffer(buffer);
-        effectSound.setLoop(false);
+    window.audioLoader.load('res/excited horror sound.wav', (buffer) => {
+        window.effectSound.setBuffer(buffer);
+        window.effectSound.setLoop(false);
     });
 
     window.lightningListener = new THREE.AudioListener();
-    window.LightningSound = new THREE.Audio(lightningListener);
+    window.LightningSound = new THREE.Audio(window.lightningListener);
     window.lightningAudioLoader = new THREE.AudioLoader();
 }
 
@@ -243,7 +242,7 @@ function main() {
     $(window.gameUI).hide();
     $(window.eventText).hide();
 
-    findSessionButton.addEventListener('click', () => {
+    window.findSessionButton.addEventListener('click', () => {
         fade(document.getElementById('menu'));
         enterLoadingScreen();
     });
@@ -251,8 +250,8 @@ function main() {
 
 function update() {
     //events
-    var rand = THREE.Math.randFloat(0.0, 1.0);
-    window.eventSystem.getEvents().forEach(event => {
+    let rand = THREE.Math.randFloat(0.0, 1.0);
+    window.eventSystem.getEvents().forEach((event: Event) => {
         if (rand > event.getRate()) {
             // console.log(event.getRate());
         }
@@ -262,12 +261,12 @@ function update() {
         }
     });
     if (window.mouseDown) {
-        var raycaster = new THREE.Raycaster();
+        let raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(window.mouse, window.camera);
-        var intersects = [];
+        let intersects: any[] = [];
         window.boardCollider.raycast(raycaster, intersects);
         if (intersects.length > 0) {
-            var point = intersects[0].point;
+            let point = intersects[0].point;
 
             //emit point to Server
             window.socket.emit('player_marker_pos', new Vector2(point.x, point.z));
@@ -285,18 +284,18 @@ function onPlayerLeft() {
 }
 
 function animate() {
-    var delta = clock.getDelta();
+    let delta = window.clock.getDelta();
     update();
     window.mixer.update(delta);
 
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    window.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
 
     //if using orbit controls, update each frame
     // window.controls.update();
 
-    renderer.render(window.scene, window.camera);
+    window.renderer.render(window.scene, window.camera);
     requestAnimationFrame(animate);
 }
 
