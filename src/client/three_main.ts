@@ -1,9 +1,13 @@
 import { PerspectiveCamera, Scene, BoxGeometry, MeshNormalMaterial, Mesh, WebGLRenderer } from 'three';
 
-let camera: any, scene: any, renderer: any;
-let geometry: any, material: any, mesh: any;
+let camera: THREE.Camera;
+let scene: THREE.Scene;
+let renderer: THREE.WebGLRenderer;
+let geometry: THREE.Geometry;
+let material: THREE.Material;
+let mesh: THREE.Mesh;
 
-function init() {
+function init(): void {
     camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
     camera.position.z = 1;
 
@@ -20,7 +24,7 @@ function init() {
     document.body.appendChild(renderer.domElement);
 }
 
-function animate() {
+function animate(): void {
     requestAnimationFrame(animate);
 
     mesh.rotation.x += 0.01;
