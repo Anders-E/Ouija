@@ -1,20 +1,22 @@
 export class EventSystem {
+    private events: Event[];
+    
     constructor() {
-        self.events = [];
+        this.events = [];
     }
 
     getEvents(): Event[] {
-        return self.events;
+        return this.events;
     }
 
     addEvent(e: Event): void {
-        self.events.push(e);
+        this.events.push(e);
     }
 
     removeEvent(e: Event): void {
-        const i = self.events.indexOf(e);
+        const i = this.events.indexOf(e);
         if (i > -1)
-            self.events.splice(i, 1);
+        this.events.splice(i, 1);
     }
 }
 
@@ -23,15 +25,15 @@ export class Event {
     private rate: number
 
     constructor(f: Function, rate: number) {
-        self.function = f;
-        self.rate = rate;
+        this.function = f;
+        this.rate = rate;
     }
 
     getRate() {
-        return self.rate;
+        return this.rate;
     }
 
     getFunction() {
-        return self.function;
+        return this.function;
     }
 }

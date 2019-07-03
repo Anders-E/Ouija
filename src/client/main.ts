@@ -1,32 +1,47 @@
 import * as THREE from 'three';
 import GLTFLoader from 'three-gltf-loader';
 import io from 'socket.io-client';
+import $ from 'jquery';
 
 import { Vector2 } from './vector2';
 import { EventSystem, Event } from './eventSystem';
 
+/*** GLOBALS ***/
+let renderer: THREE.Renderer;
+let mDown: boolean;
+let scene: THREE.Scene;
+let lightningLight: THREE.PointLight;
+let lightningAudioLoader: THREE.AudioLoader;
+let lightningSound: THREE.Audio;
+let eventSystem: EventSystem
+let eventText: HTMLElement;
+let camera: THREE.PerspectiveCamera
+let clock: THREE.Clock;
+let mixer: THREE.AnimationMixer;
+let boardCollider: THREE.Object3D;
+let marker: THREE.Object3D;
+let socket: SocketIOClient.Socket;
+let effectSound: THREE.Audio;
+let mouse: Vector2;
+
 function mouseDown(e: MouseEvent) {
-    window.mouseDown = true;
+    mDown = true;
 }
 
 function mouseUp(e: MouseEvent) {
-    window.mouseDown = false;
+    mDown = false;
 }
 
 function enterLoadingScreen() {
     unfade(document.getElementById('loading-screen'));
 
     //TODO: Match-making; Currently only setting up renderer
-    window.scene = new THREE.Scene();
+    scene = new THREE.Scene();
 
-    window.renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    initScene(window.scene, window.renderer);
-    // initUI(renderer);
+    initScene(scene, renderer);
     initSounds();
-
-    window.accelerateDistance = 1;
-    window.accelerateSpeed = 0.5;
 
     //TODO: Call start session when session has been found instead
     setTimeout(function() {
@@ -35,18 +50,18 @@ function enterLoadingScreen() {
 }
 
 function startSession() {
-    document.body.appendChild(window.renderer.domElement);
-    $(window.renderer.domElement).hide();
-    window.eventSystem = new EventSystem();
-    window.eventSystem.addEvent(
+    document.body.appendChild(renderer.domElement);
+    $(renderer.domElement).hide();
+    eventSystem = new EventSystem();
+    eventSystem.addEvent(
         new Event(() => {
-            window.lightningLight.intensity = 100;
-            window.lightningAudioLoader.load('res/lightning.mp3', (buffer: any) => {
-                window.LightningSound.setBuffer(buffer);
-                window.LightningSound.setLoop(false);
-                window.LightningSound.setVolume(0.1);
-                window.LightningSound.play();
-            });
+            lightningLight.intensity = 100;
+            lightningAudioLoader.load('res/lightning.mp3', (buffer: any) => {
+                lightningSound.setBuffer(buffer);
+                lightningSound.setLoop(false);
+                lightningSound.setVolume(0.1);
+                lightningSound.play();
+            }, () => {},() => {}); // TODO: Add onProgress and onError functions: https://threejs.org/docs/#api/en/loaders/AudioLoader
         }, 0.001)
     );
 
@@ -59,16 +74,16 @@ function startSession() {
     //Slight delay before fading out the loading screen
     setTimeout(function() {
         fade(document.getElementById('loading-screen'));
-        unfade(window.renderer.domElement);
+        unfade(renderer.domElement);
     }, 1000);
 }
 
 //duration in ms
 function showMessage(message: string, duration: number) {
-    window.eventText.innerHTML = message;
-    unfade(window.eventText);
+    eventText.innerHTML = message;
+    unfade(eventText);
     setTimeout(function() {
-        fade(window.eventText);
+        fade(eventText);
     }, duration * 1000);
 }
 
@@ -92,19 +107,15 @@ function initScene(scene: any, renderer: any) {
     renderer.setClearColor(new THREE.Color('#050a0f'));
 
     //cameras
-    window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    window.camera.position.set(0, 5, 7);
-    window.camera.rotation.set(-90, 0, 0);
-    window.minCameraPosition = new THREE.Vector3(0, 0, 0);
-    window.maxCameraPosition = new THREE.Vector3(0, 5, 7);
-    window.zoomFactor = 0.5;
-    // camera.lookAt(new THREE.Vector3(0,0,0));
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 5, 7);
+    camera.rotation.set(-90, 0, 0);
+    
+    scene.add(camera);
 
-    scene.add(window.camera);
+    clock = new THREE.Clock();
 
-    window.clock = new THREE.Clock();
-
-    window.mixer = new THREE.AnimationMixer();
+    mixer = new THREE.AnimationMixer(camera);
 
     //light
     // let ambientLight = new THREE.AmbientLight( 0xffffff, 1000); // soft white light
@@ -115,13 +126,13 @@ function initScene(scene: any, renderer: any) {
 
     scene.add(light);
 
-    window.lightningLight = new THREE.PointLight(0x66b2ff, 0);
-    window.lightningLight.position.set(3, 5, 12);
-    window.lightningLight.castShadow = true;
-    window.lightningLight.shadow.mapSize.width = 1024 * 4;
-    window.lightningLight.shadow.mapSize.height = 1024 * 4;
+    lightningLight = new THREE.PointLight(0x66b2ff, 0);
+    lightningLight.position.set(3, 5, 12);
+    lightningLight.castShadow = true;
+    lightningLight.shadow.mapSize.width = 1024 * 4;
+    lightningLight.shadow.mapSize.height = 1024 * 4;
 
-    scene.add(window.lightningLight);
+    scene.add(lightningLight);
 
     //geometry
     let loader = new GLTFLoader();
@@ -131,7 +142,7 @@ function initScene(scene: any, renderer: any) {
         // resource URL
         '/res/board.glb',
         // called when the resource is loaded
-        function(gltf) {
+        (gltf) => {
             gltf.animations; // Array<THREE.AnimationClip>
             gltf.scene; // THREE.Scene
 
@@ -141,40 +152,40 @@ function initScene(scene: any, renderer: any) {
                 node.receiveShadow = true;
 
                 if (node.name == 'BoardCollider') {
-                    window.boardCollider = node;
-                    window.boardCollider.visible = false;
+                    boardCollider = node;
+                    boardCollider.visible = false;
                 }
 
                 if (node.name == 'Marker') {
-                    window.marker = node;
+                    marker = node;
 
                     //socket setup
-                    window.socket = io();
-                    window.socket.on('connect', () => {
+                    socket = io();
+                    socket.on('connect', () => {
                         console.log('connected to server');
-                        console.log(window.socket);
+                        console.log(socket);
 
-                        window.socket.on('game_marker_pos', (pos: Vector2) => {
-                            window.marker.position.set(pos.x, 0, pos.y);
+                        socket.on('game_marker_pos', (pos: Vector2) => {
+                            marker.position.set(pos.x, 0, pos.y);
                         });
 
-                        window.socket.on('playerJoined', (id: string) => {
+                        socket.on('playerJoined', (id: string) => {
                             console.log('Player ' + id + ' connected');
                             onPlayerJoined();
                         });
 
-                        window.socket.on('playerLeft', (id: string) => {
+                        socket.on('playerLeft', (id: string) => {
                             console.log('Player ' + id + ' left');
                             onPlayerLeft();
                         });
                     });
                 }
             });
-            window.clips = gltf.animations;
-            window.mixer = new THREE.AnimationMixer(window.camera);
-            let action = window.mixer.clipAction(THREE.AnimationClip.findByName(window.clips, 'Action.002'));
+            const clips: THREE.AnimationClip[] = gltf.animations;
+            mixer = new THREE.AnimationMixer(camera);
+            const action = mixer.clipAction(THREE.AnimationClip.findByName(clips, 'Action.002'));
             action.timeScale = 2; // add this
-            window.mixer.addEventListener('finished', function(e) {
+            mixer.addEventListener('finished', function(e) {
                 unfade(document.getElementById('game'));
             }); //
 
@@ -202,47 +213,47 @@ function initScene(scene: any, renderer: any) {
 }
 
 function initSounds() {
-    window.audioListener = new THREE.AudioListener();
+    const audioListener = new THREE.AudioListener();
 
-    window.ambientSound = new THREE.Audio(audioListener);
-    window.audioLoader = new THREE.AudioLoader();
-    window.audioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', (buffer) => {
-        window.ambientSound.setBuffer(buffer);
-        window.ambientSound.setLoop(false);
-        window.ambientSound.setVolume(0.05);
-        window.ambientSound.play();
-    });
+    const ambientSound = new THREE.Audio(audioListener);
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('res/393808__pfranzen__windy-creaky-old-house-ambience.ogg', (buffer: THREE.AudioBuffer) => {
+        ambientSound.setBuffer(buffer);
+        ambientSound.setLoop(false);
+        ambientSound.setVolume(0.05);
+        ambientSound.play();
+    }, () => {}, () => {}); // TODO: Add onProgress and onError functions: https://threejs.org/docs/#api/en/loaders/AudioLoader
 
-    window.effectSound = new THREE.Audio(audioListener);
-    window.audioLoader.load('res/excited horror sound.wav', (buffer) => {
-        window.effectSound.setBuffer(buffer);
-        window.effectSound.setLoop(false);
-    });
+    effectSound = new THREE.Audio(audioListener);
+    audioLoader.load('res/excited horror sound.wav', (buffer: THREE.AudioBuffer) => {
+        effectSound.setBuffer(buffer);
+        effectSound.setLoop(false);
+    }, () => {}, () => {}); // TODO: Add onProgress and onError functions: https://threejs.org/docs/#api/en/loaders/AudioLoader
 
-    window.lightningListener = new THREE.AudioListener();
-    window.LightningSound = new THREE.Audio(window.lightningListener);
-    window.lightningAudioLoader = new THREE.AudioLoader();
+    const lightningListener = new THREE.AudioListener();
+    lightningSound = new THREE.Audio(lightningListener);
+    lightningAudioLoader = new THREE.AudioLoader();
 }
 
-function setMousePosition(e) {
-    window.mouse = new Vector2((e.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
+function setMousePosition(e: MouseEvent) {
+    mouse = new Vector2((e.clientX / window.innerWidth) * 2 - 1, - (e.clientY / window.innerHeight) * 2 + 1);
 }
 
 function main() {
     /* EXAMPLE THREE JS */
 
     //TODO: Add buttons here
-    window.findSessionButton = document.getElementById('findSession');
-    window.mainMenu = document.getElementById('menu');
-    window.loadingScreen = document.getElementById('loading-screen');
-    window.gameUI = document.getElementById('game');
-    window.eventText = document.getElementById('eventText');
+    const findSessionButton = document.getElementById('findSession');
+    const mainMenu = document.getElementById('menu');
+    const loadingScreen = document.getElementById('loading-screen');
+    const gameUI = document.getElementById('game');
+    eventText = document.getElementById('eventText');
 
-    $(window.loadingScreen).hide();
-    $(window.gameUI).hide();
-    $(window.eventText).hide();
+    $(loadingScreen).hide();
+    $(gameUI).hide();
+    $(eventText).hide();
 
-    window.findSessionButton.addEventListener('click', () => {
+    findSessionButton.addEventListener('click', () => {
         fade(document.getElementById('menu'));
         enterLoadingScreen();
     });
@@ -250,8 +261,8 @@ function main() {
 
 function update() {
     //events
-    let rand = THREE.Math.randFloat(0.0, 1.0);
-    window.eventSystem.getEvents().forEach((event: Event) => {
+    const rand = THREE.Math.randFloat(0.0, 1.0);
+    eventSystem.getEvents().forEach((event: Event) => {
         if (rand > event.getRate()) {
             // console.log(event.getRate());
         }
@@ -260,22 +271,22 @@ function update() {
             event.getFunction()();
         }
     });
-    if (window.mouseDown) {
-        let raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(window.mouse, window.camera);
-        let intersects: any[] = [];
-        window.boardCollider.raycast(raycaster, intersects);
+    if (mDown) {
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+        const intersects: any[] = [];
+        boardCollider.raycast(raycaster, intersects);
         if (intersects.length > 0) {
-            let point = intersects[0].point;
+            const point = intersects[0].point;
 
             //emit point to Server
-            window.socket.emit('player_marker_pos', new Vector2(point.x, point.z));
+            socket.emit('player_marker_pos', new Vector2(point.x, point.z));
         }
     }
 }
 
 function onPlayerJoined() {
-    window.effectSound.play();
+    effectSound.play();
     showMessage('It feels as though someone is watching you...', 5);
 }
 
@@ -284,18 +295,18 @@ function onPlayerLeft() {
 }
 
 function animate() {
-    let delta = window.clock.getDelta();
+    let delta = clock.getDelta();
     update();
-    window.mixer.update(delta);
+    mixer.update(delta);
 
-    window.camera.lookAt(new THREE.Vector3(0, 0, 0));
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    window.lightningLight.intensity = THREE.Math.clamp(window.lightningLight.intensity - delta * 200, 0, 100);
+    lightningLight.intensity = THREE.Math.clamp(lightningLight.intensity - delta * 200, 0, 100);
 
     //if using orbit controls, update each frame
     // window.controls.update();
 
-    window.renderer.render(window.scene, window.camera);
+    renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
 
