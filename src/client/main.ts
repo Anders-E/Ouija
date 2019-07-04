@@ -3,7 +3,6 @@ import GLTFLoader from 'three-gltf-loader';
 import io from 'socket.io-client';
 import $ from 'jquery';
 
-import { Vector2 } from './vector2';
 import { EventSystem, Event } from './eventSystem';
 
 /*** GLOBALS ***/
@@ -22,7 +21,7 @@ let boardCollider: THREE.Object3D;
 let marker: THREE.Object3D;
 let socket: SocketIOClient.Socket;
 let effectSound: THREE.Audio;
-let mouse: Vector2;
+let mouse: THREE.Vector2;
 
 function mouseDown(e: MouseEvent): void {
     mDown = true;
@@ -33,7 +32,7 @@ function mouseUp(e: MouseEvent): void {
 }
 
 function setMousePosition(e: MouseEvent): void {
-    mouse = new Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+    mouse = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
 }
 
 function update(): void {
@@ -59,7 +58,7 @@ function update(): void {
             const point = intersects[0].point;
 
             //emit point to Server
-            socket.emit('player_marker_pos', new Vector2(point.x, point.z));
+            socket.emit('player_marker_pos', new THREE.Vector2(point.x, point.z));
         }
     }
 }
@@ -211,7 +210,7 @@ function initScene(scene: THREE.Scene, renderer: THREE.WebGLRenderer): void {
 
                                 socket.on(
                                     'game_marker_pos',
-                                    (pos: Vector2): void => {
+                                    (pos: THREE.Vector2): void => {
                                         marker.position.set(pos.x, 0, pos.y);
                                     }
                                 );
