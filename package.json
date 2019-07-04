@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "npm run serve",
-    "serve": "node dist/server.js",
-    "watch-node": "nodemon dist/server.js",
+    "serve": "node dist/server/server.js",
+    "watch-node": "nodemon dist/server/server.js",
     "watch-ts": "tsc -w",
     "watch": "npm run watch-ts & npm run watch-node"
   },
@@ -43,15 +43,16 @@
     "nodemon": "^1.19.0",
     "prettier": "^1.17.0",
     "socket.io-client": "^2.2.0",
+    "source-map-loader": "^0.2.4",
     "three": "^0.105.2",
     "three-gltf-loader": "^1.105.0",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.2",
     "webpack-cli": "^3.3.5"
   },
   "dependencies": {
     "express": "^4.16.4",
     "socket.io": "^2.2.0",
-    "ts-loader": "^6.0.4",
-    "typescript": "^3.5.2",
     "uuid": "^3.3.2",
     "webpack": "^4.35.2",
     "winston": "^3.2.1"

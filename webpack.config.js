@@ -2,6 +2,8 @@ const path = require('path');
 
 module.exports = {
     entry: './src/client/main.ts',
+    mode: 'production',
+    devtool: 'source-map',
     output: {
         path: path.resolve(__dirname, 'src/client'),
         filename: 'bundle.js'
@@ -12,11 +14,16 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
+                test: /\.ts$/,
+                use: { loader: 'ts-loader' },
                 exclude: /node_modules/
+            },
+            {
+                enforce: 'pre',
+                test: /\.js$/,
+                loader: 'source-map-loader'
             }
         ]
-    }, 
+    },
     watch: true
 };
