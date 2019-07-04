@@ -1,9 +1,8 @@
 import * as THREE from 'three';
-import GLTFLoader from 'three-gltf-loader';
-import io from 'socket.io-client';
 import $ from 'jquery';
 
 import { EventSystem, Event } from './eventSystem';
+import { OuijaScene } from './ouijaScene';
 
 /*** GLOBALS ***/
 let renderer: THREE.WebGLRenderer;
@@ -72,9 +71,6 @@ function animate(): void {
 
     lightningLight.intensity = THREE.Math.clamp(lightningLight.intensity - delta * 200, 0, 100);
 
-    //if using orbit controls, update each frame
-    // window.controls.update();
-
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
@@ -139,134 +135,6 @@ function onPlayerLeft(): void {
     showMessage('The tension somehow feels lighter...', 5);
 }
 
-function initScene(scene: THREE.Scene, renderer: THREE.WebGLRenderer): void {
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(new THREE.Color('#050a0f'));
-
-    //cameras
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 5, 7);
-    camera.rotation.set(-90, 0, 0);
-
-    scene.add(camera);
-
-    clock = new THREE.Clock();
-
-    mixer = new THREE.AnimationMixer(camera);
-
-    //light
-    // let ambientLight = new THREE.AmbientLight( 0xffffff, 1000); // soft white light
-    // scene.add( ambientLight );
-
-    let light = new THREE.PointLight(0x66b2ff, 3);
-    light.position.set(0, 2, 0);
-
-    scene.add(light);
-
-    lightningLight = new THREE.PointLight(0x66b2ff, 0);
-    lightningLight.position.set(3, 5, 12);
-    lightningLight.castShadow = true;
-    lightningLight.shadow.mapSize.width = 1024 * 4;
-    lightningLight.shadow.mapSize.height = 1024 * 4;
-
-    scene.add(lightningLight);
-
-    //geometry
-    let loader = new GLTFLoader();
-
-    // Load a glTF resource
-    loader.load(
-        // resource URL
-        '/res/board.glb',
-        // called when the resource is loaded
-        (gltf): void => {
-            gltf.animations; // Array<THREE.AnimationClip>
-            gltf.scene; // THREE.Scene
-
-            //activate shadows for objects in scene
-            gltf.scene.traverse(
-                (node): void => {
-                    node.castShadow = true;
-                    node.receiveShadow = true;
-
-                    if (node.name == 'BoardCollider') {
-                        boardCollider = node;
-                        boardCollider.visible = false;
-                    }
-
-                    if (node.name == 'Marker') {
-                        marker = node;
-
-                        //socket setup
-                        socket = io();
-                        socket.on(
-                            'connect',
-                            (): void => {
-                                console.log('connected to server');
-                                console.log(socket);
-
-                                socket.on(
-                                    'game_marker_pos',
-                                    (pos: THREE.Vector2): void => {
-                                        marker.position.set(pos.x, 0, pos.y);
-                                    }
-                                );
-
-                                socket.on(
-                                    'playerJoined',
-                                    (id: string): void => {
-                                        console.log('Player ' + id + ' connected');
-                                        onPlayerJoined();
-                                    }
-                                );
-
-                                socket.on(
-                                    'playerLeft',
-                                    (id: string): void => {
-                                        console.log('Player ' + id + ' left');
-                                        onPlayerLeft();
-                                    }
-                                );
-                            }
-                        );
-                    }
-                }
-            );
-            const clips: THREE.AnimationClip[] = gltf.animations;
-            mixer = new THREE.AnimationMixer(camera);
-            const action = mixer.clipAction(THREE.AnimationClip.findByName(clips, 'Action.002'));
-            action.timeScale = 2; // add this
-            mixer.addEventListener(
-                'finished',
-                (): void => {
-                    unfade(document.getElementById('game'));
-                }
-            );
-
-            action.setLoop(THREE.LoopOnce, 1);
-            action.clampWhenFinished = true;
-            action.play();
-            gltf.asset; // Object
-
-            gltf.scene.castShadow = true;
-            gltf.scene.receiveShadow = true;
-
-            scene.add(gltf.scene);
-        },
-        // called while loading is progressing
-        (xhr: ProgressEvent): void => {
-            console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
-        },
-        // called when loading has errors
-        (error: ErrorEvent): void => {
-            console.log(error);
-        }
-    );
-}
-
 function initSounds(): void {
     const audioListener = new THREE.AudioListener();
 
@@ -308,6 +176,7 @@ function enterLoadingScreen(): void {
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
 
+    const ouijaScene = new OuijaScene();
     initScene(scene, renderer);
     initSounds();
 
@@ -318,8 +187,6 @@ function enterLoadingScreen(): void {
 }
 
 function main(): void {
-    /* EXAMPLE THREE JS */
-
     //TODO: Add buttons here
     const findSessionButton = document.getElementById('findSession');
     const mainMenu = document.getElementById('menu');
