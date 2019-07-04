@@ -1,24 +1,20 @@
 import * as THREE from 'three';
 import $ from 'jquery';
+import io from 'socket.io-client';
 
 import { EventSystem, Event } from './eventSystem';
 import { OuijaScene } from './ouijaScene';
+import { Network } from './network';
 
 /*** GLOBALS ***/
-let renderer: THREE.WebGLRenderer;
+let ouijaScene: OuijaScene;
+let network: Network;
 let mDown: boolean;
-let scene: THREE.Scene;
 let lightningLight: THREE.PointLight;
 let lightningAudioLoader: THREE.AudioLoader;
 let lightningSound: THREE.Audio;
 let eventSystem: EventSystem;
 let eventText: HTMLElement;
-let camera: THREE.PerspectiveCamera;
-let clock: THREE.Clock;
-let mixer: THREE.AnimationMixer;
-let boardCollider: THREE.Object3D;
-let marker: THREE.Object3D;
-let socket: SocketIOClient.Socket;
 let effectSound: THREE.Audio;
 let mouse: THREE.Vector2;
 
@@ -36,42 +32,43 @@ function setMousePosition(e: MouseEvent): void {
 
 function update(): void {
     //events
-    const rand = THREE.Math.randFloat(0.0, 1.0);
-    eventSystem.getEvents().forEach(
-        (event: Event): void => {
-            if (rand > event.getRate()) {
-                // console.log(event.getRate());
-            }
+    // const rand = THREE.Math.randFloat(0.0, 1.0);
+    // eventSystem.getEvents().forEach(
+    //     (event: Event): void => {
+    //         if (rand > event.getRate()) {
+    //             // console.log(event.getRate());
+    //         }
 
-            if (rand <= event.getRate()) {
-                event.getFunction()();
-            }
-        }
-    );
+    //         if (rand <= event.getRate()) {
+    //             event.getFunction()();
+    //         }
+    //     }
+    // );
     if (mDown) {
         const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, camera);
+        raycaster.setFromCamera(mouse, ouijaScene.getCamera());
         const intersects: THREE.Intersection[] = [];
-        boardCollider.raycast(raycaster, intersects);
+        ouijaScene.getBoardCollider().raycast(raycaster, intersects);
         if (intersects.length > 0) {
             const point = intersects[0].point;
 
             //emit point to Server
-            socket.emit('player_marker_pos', new THREE.Vector2(point.x, point.z));
+            network.getSocket().emit('player_marker_pos', new THREE.Vector2(point.x, point.z));
         }
     }
+    ouijaScene.setMarkerPosition(network.getMarkerPosition());
 }
 
 function animate(): void {
-    let delta = clock.getDelta();
+    let delta = ouijaScene.getClock().getDelta();
     update();
-    mixer.update(delta);
+    ouijaScene.getMixer().update(delta);
 
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    ouijaScene.getCamera().lookAt(new THREE.Vector3(0, 0, 0));
 
-    lightningLight.intensity = THREE.Math.clamp(lightningLight.intensity - delta * 200, 0, 100);
+    // lightningLight.intensity = THREE.Math.clamp(lightningLight.intensity - delta * 200, 0, 100);
 
-    renderer.render(scene, camera);
+    ouijaScene.getRenderer().render(ouijaScene.getScene(), ouijaScene.getCamera());
     requestAnimationFrame(animate);
 }
 
@@ -84,25 +81,25 @@ function unfade(element: HTMLElement): void {
 }
 
 function startSession(): void {
-    document.body.appendChild(renderer.domElement);
-    $(renderer.domElement).hide();
-    eventSystem = new EventSystem();
-    eventSystem.addEvent(
-        new Event((): void => {
-            lightningLight.intensity = 100;
-            lightningAudioLoader.load(
-                'res/lightning.mp3',
-                (buffer: THREE.AudioBuffer): void => {
-                    lightningSound.setBuffer(buffer);
-                    lightningSound.setLoop(false);
-                    lightningSound.setVolume(0.1);
-                    lightningSound.play();
-                },
-                (): void => {},
-                (): void => {}
-            ); // TODO: Add onProgress and onError functions: https://threejs.org/docs/#api/en/loaders/AudioLoader
-        }, 0.001)
-    );
+    document.body.appendChild(ouijaScene.getRenderer().domElement);
+    $(ouijaScene.getRenderer().domElement).hide();
+    // eventSystem = new EventSystem();
+    // eventSystem.addEvent(
+    //     new Event((): void => {
+    //         lightningLight.intensity = 100;
+    //         lightningAudioLoader.load(
+    //             'res/lightning.mp3',
+    //             (buffer: THREE.AudioBuffer): void => {
+    //                 lightningSound.setBuffer(buffer);
+    //                 lightningSound.setLoop(false);
+    //                 lightningSound.setVolume(0.1);
+    //                 lightningSound.play();
+    //             },
+    //             (): void => {},
+    //             (): void => {}
+    //         ); // TODO: Add onProgress and onError functions: https://threejs.org/docs/#api/en/loaders/AudioLoader
+    //     }, 0.001)
+    // );
 
     window.addEventListener('mousemove', setMousePosition, false);
     window.addEventListener('mousedown', mouseDown, false);
@@ -113,7 +110,7 @@ function startSession(): void {
     //Slight delay before fading out the loading screen
     setTimeout((): void => {
         fade(document.getElementById('loading-screen'));
-        unfade(renderer.domElement);
+        unfade(ouijaScene.getRenderer().domElement);
     }, 1000);
 }
 
@@ -172,12 +169,8 @@ function enterLoadingScreen(): void {
     unfade(document.getElementById('loading-screen'));
 
     //TODO: Match-making; Currently only setting up renderer
-    scene = new THREE.Scene();
+    ouijaScene = new OuijaScene();
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-
-    const ouijaScene = new OuijaScene();
-    initScene(scene, renderer);
     initSounds();
 
     //TODO: Call start session when session has been found instead
@@ -205,6 +198,8 @@ function main(): void {
             enterLoadingScreen();
         }
     );
+
+    network = new Network();
 }
 
 function endSession(): void {
