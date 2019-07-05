@@ -80,7 +80,7 @@ typings/
 .dynamodb/
 
 # Compiled TypeScript etc.
-dist
+**/dist
 
 # Images, won't be needed since textures are baked into model .glb format
 *.png

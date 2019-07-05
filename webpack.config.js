@@ -5,7 +5,7 @@ module.exports = {
     mode: 'production',
     devtool: 'source-map',
     output: {
-        path: path.resolve(__dirname, 'src/client'),
+        path: path.resolve(__dirname, 'public/dist'),
         filename: 'bundle.js'
     },
     resolve: {
@@ -24,6 +24,5 @@ module.exports = {
                 loader: 'source-map-loader'
             }
         ]
-    },
-    watch: true
+    }
 };

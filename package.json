@@ -4,13 +4,18 @@
   "description": "Ouija board",
   "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "npm run serve",
-    "serve": "node dist/server/server.js",
+    "start": "node dist/server/server.js",
+    
+    "build": "npm run build-client & npm run build-server",
+    "build-client": "webpack",
+    "build-server": "tsc",
+    
+    "watch-webpack": "webpack --watch",
     "watch-node": "nodemon dist/server/server.js",
     "watch-ts": "tsc -w",
-    "watch": "npm run watch-ts & npm run watch-node"
+    "watch-all": "npm run watch-webpack & npm run watch-ts & npm run watch-node",
+    
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

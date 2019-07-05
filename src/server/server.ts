@@ -13,7 +13,7 @@ const httpServer: http.Server = new http.Server(app);
 const io: socketio.Server = socketio(httpServer);
 
 // Serve client
-app.use(express.static('src/client'));
+app.use(express.static('public'));
 
 let game = new Game();
 
