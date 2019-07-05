@@ -23,12 +23,12 @@ Once the server tells you it is up and running, open `http://localhost:3000/` in
 ### Build & Run Ouija for development
 For development purposes, scripts exist to set up listeners for file changes:
 
-| Script        | Description                                                                                       |
-|---------------|---------------------------------------------------------------------------------------------------|
-| watch-all     | Runs all the watchers described below                                                             |
-| watch-webpack | Listens for changes in the client code and bundles it into bundle.js                              |
-| watch-ts      | Listens for changes in the server code and compiles it to JavaScript                              |
-| watch-node    | Runs server and listens for changes in server code. Restarts the server whenever changes are made |
+| Script          | Description                                                                                       |
+|-----------------|---------------------------------------------------------------------------------------------------|
+| `watch-all`     | Runs all the watchers described below                                                             |
+| `watch-webpack` | Listens for changes in the client code and bundles it into bundle.js                              |
+| `watch-ts`      | Listens for changes in the server code and compiles it to JavaScript                              |
+| `watch-node`    | Runs server and listens for changes in server code. Restarts the server whenever changes are made |
 
 For example, to run the server and watch for any changes to any code in the project simply run `npm run watch-all` and navigate to `http://localhost:3000/` in your browser.
 
@@ -36,8 +36,10 @@ For example, to run the server and watch for any changes to any code in the proj
 
 Ouija uses [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) to check for and fix stylistic code errors:
 
-- To run check for stylistic errors, run `npm run style-check`.
-- To fix any auto-fixable errors, run `npm run style-fix`.
+| Script                | Description                 |
+|-----------------------|-----------------------------|
+| `npm run style-check` | Check for stylistic errors  |
+| `npm run style-fix`   | Fix any auto-fixable errors |
 
 It is recommended to do this before any commit to keep style as consinstent as possible.
 
