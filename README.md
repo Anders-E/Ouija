@@ -43,8 +43,10 @@ It is recommended to do this before any commit to keep style as consinstent as p
 
 Many editors have plugins for ESLint which displays any stylistic errors in the editor:
 
-- Visual Studio Code: [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- Atom: [Linter](Linter) + [linter-eslint](https://atom.io/packages/linter-eslint)
+| Editor             | Plugins                                                                              |
+|------------------- | -------------------------------------------------------------------------------------|
+| Visual Studio Code | [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) |
+| Atom               | [Linter](https://atom.io/packages/linter) + [linter-eslint](https://atom.io/packages/linter-eslint) |
 
 ## License
 
