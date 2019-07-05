@@ -34,7 +34,7 @@ For example, to run the server and watch for any changes to any code in the proj
 
 ### Code Style, ESLint & Prettier
 
-Ouija uses ESLint and Prettier to check for and fix stylistic code errors:
+Ouija uses [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) to check for and fix stylistic code errors:
 
 - To run check for stylistic errors, run `npm run style-check`.
 - To fix any auto-fixable errors, run `npm run style-fix`.
