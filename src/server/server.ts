@@ -17,29 +17,23 @@ app.use(express.static('public'));
 
 let game = new Game();
 
-io.on(
-    'connection',
-    (playerSocket: socketio.Socket): void => {
+io.on('connection', (playerSocket: socketio.Socket): void => {
+    logger.info({
+        message: 'A user connected',
+        event: 'connection',
+        socketId: playerSocket.id
+    });
+
+    game.addPlayer(new Player(playerSocket));
+
+    playerSocket.on('disconnect', (): void => {
         logger.info({
-            message: 'A user connected',
-            event: 'connection',
+            message: 'A user disconnected',
+            event: 'disconnect',
             socketId: playerSocket.id
         });
-
-        game.addPlayer(new Player(playerSocket));
-
-        playerSocket.on(
-            'disconnect',
-            (): void => {
-                logger.info({
-                    message: 'A user disconnected',
-                    event: 'disconnect',
-                    socketId: playerSocket.id
-                });
-            }
-        );
-    }
-);
+    });
+});
 
 game.play();
 

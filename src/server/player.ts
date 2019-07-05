@@ -15,18 +15,15 @@ export class Player {
         this.socket = socket;
         this.pos = new Vector2();
 
-        this.socket.on(
-            'player_marker_pos',
-            (pos: Coords): void => {
-                this.input = pos;
-                this.didSendInput = true;
-                logger.debug({
-                    message: 'Input received from player',
-                    event: 'player_marker_pos',
-                    id: this.id,
-                    input: pos
-                });
-            }
-        );
+        this.socket.on('player_marker_pos', (pos: Coords): void => {
+            this.input = pos;
+            this.didSendInput = true;
+            logger.debug({
+                message: 'Input received from player',
+                event: 'player_marker_pos',
+                id: this.id,
+                input: pos
+            });
+        });
     }
 }

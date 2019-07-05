@@ -40,33 +40,28 @@ export class OuijaScene {
             '/res/board.glb',
             // called when the resource is loaded
             (gltf: any): void => {
-                gltf.scene.traverse(
-                    (node: THREE.Object3D): void => {
-                        node.castShadow = true;
-                        node.receiveShadow = true;
+                gltf.scene.traverse((node: THREE.Object3D): void => {
+                    node.castShadow = true;
+                    node.receiveShadow = true;
 
-                        if (node.name == 'BoardCollider') {
-                            this.boardCollider = node;
-                            this.boardCollider.visible = false;
-                        }
-
-                        if (node.name == 'Marker') {
-                            this.marker = node;
-                        }
+                    if (node.name == 'BoardCollider') {
+                        this.boardCollider = node;
+                        this.boardCollider.visible = false;
                     }
-                );
+
+                    if (node.name == 'Marker') {
+                        this.marker = node;
+                    }
+                });
 
                 this.mixer = new THREE.AnimationMixer(this.camera);
                 const clips: THREE.AnimationClip[] = gltf.animations;
                 const action = this.mixer.clipAction(THREE.AnimationClip.findByName(clips, 'Action.002'));
                 action.timeScale = 2; // add this
 
-                this.mixer.addEventListener(
-                    'finished',
-                    (): void => {
-                        // TODO: unfade(document.getElementById('game'));
-                    }
-                );
+                this.mixer.addEventListener('finished', (): void => {
+                    // TODO: unfade(document.getElementById('game'));
+                });
 
                 action.setLoop(THREE.LoopOnce, 1);
                 action.clampWhenFinished = true;

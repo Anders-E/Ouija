@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import Vector2 from 'three';
 
 export class Network {
     private socket: SocketIOClient.Socket;
@@ -7,22 +8,16 @@ export class Network {
     public constructor() {
         this.socket = io();
         console.log(this.socket);
-        this.socket.on(
-            'connect',
-            (): void => {
-                this.socket.on(
-                    'game_marker_pos',
-                    (position: THREE.Vector2): void => {
-                        this.markerPosition = position;
-                    }
-                );
-                this.socket.on('playerJoined', this.onPlayerJoined);
-                this.socket.on('playerLeft', this.onPlayerLeft);
+        this.socket.on('connect', (): void => {
+            this.socket.on('game_marker_pos', (position: THREE.Vector2): void => {
+                this.markerPosition = position;
+            });
+            this.socket.on('playerJoined', this.onPlayerJoined);
+            this.socket.on('playerLeft', this.onPlayerLeft);
 
-                console.log('connected to server');
-                console.log(this.socket);
-            }
-        );
+            console.log('connected to server');
+            console.log(this.socket);
+        });
     }
 
     public getMarkerPosition(): THREE.Vector2 {

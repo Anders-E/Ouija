@@ -191,13 +191,10 @@ function main(): void {
     $(gameUI).hide();
     $(eventText).hide();
 
-    findSessionButton.addEventListener(
-        'click',
-        (): void => {
-            fade(document.getElementById('menu'));
-            enterLoadingScreen();
-        }
-    );
+    findSessionButton.addEventListener('click', (): void => {
+        fade(document.getElementById('menu'));
+        enterLoadingScreen();
+    });
 
     network = new Network();
 }

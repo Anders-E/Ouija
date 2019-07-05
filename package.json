@@ -5,16 +5,15 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server/server.js",
-    
     "build": "npm run build-client & npm run build-server",
     "build-client": "webpack",
     "build-server": "tsc",
-    
     "watch-webpack": "webpack --watch",
     "watch-node": "nodemon dist/server/server.js",
     "watch-ts": "tsc -w",
     "watch-all": "npm run watch-webpack & npm run watch-ts & npm run watch-node",
-    
+    "style-check": "eslint \"src/**/*.ts\"",
+    "style-fix": "eslint --fix \"src/**/*.ts\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -39,14 +38,14 @@
     "@types/socket.io-client": "^1.4.32",
     "@types/uuid": "^3.4.4",
     "@types/winston": "^2.4.4",
-    "@typescript-eslint/eslint-plugin": "^1.8.0",
-    "@typescript-eslint/parser": "^1.8.0",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
     "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.2.0",
+    "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-prettier": "^3.1.0",
     "jquery": "^3.4.1",
     "nodemon": "^1.19.0",
-    "prettier": "^1.17.0",
+    "prettier": "^1.18.2",
     "socket.io-client": "^2.2.0",
     "source-map-loader": "^0.2.4",
     "three": "^0.105.2",

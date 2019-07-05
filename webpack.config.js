@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
 module.exports = {
@@ -9,7 +10,7 @@ module.exports = {
         filename: 'bundle.js'
     },
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js' ]
+        extensions: ['.tsx', '.ts', '.js']
     },
     module: {
         rules: [
@@ -24,5 +25,6 @@ module.exports = {
                 loader: 'source-map-loader'
             }
         ]
-    }
+    },
+    watch: false
 };

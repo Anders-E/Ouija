@@ -8,7 +8,7 @@ Run the following commands in your terminal (UNIX/macOS) or the command prompt (
 ```
 $ git clone https://github.com/Anders-E/Ouija.git
 $ cd Ouija
-$ npm install --only-prod
+$ npm install
 $ npm run build
 ```
 
@@ -21,28 +21,30 @@ Once the server tells you it is up and running, open `http://localhost:3000/` in
 ## Contributing
 
 ### Build & Run Ouija for development
-```
-$ git clone https://github.com/Anders-E/Ouija.git
-$ cd Ouija
-$ npm install
-```
-Now in one terminal, start the TypeScript compiler watcher:
+For development purposes, scripts exist to set up listeners for file changes:
 
-`$ npm run watch-ts`
+| Script        | Description                                                                                       |
+|---------------|---------------------------------------------------------------------------------------------------|
+| watch-all     | Runs all the watchers described below                                                             |
+| watch-webpack | Listens for changes in the client code and bundles it into bundle.js                              |
+| watch-ts      | Listens for changes in the server code and compiles it to JavaScript                              |
+| watch-node    | Runs server and listens for changes in server code. Restarts the server whenever changes are made |
 
-And finally in another terminal run the Node.js watcher:
-
-`$ npm run watch-node`
-
-Once the server is up and running, open `http://localhost:3000/` in your browser.
+For example, to run the server and watch for any changes to any code in the project simply run `npm run watch-all` and navigate to `http://localhost:3000/` in your browser.
 
 ### Code Style, ESLint & Prettier
 
-*TODO*
+Ouija uses ESLint and Prettier to check for and fix stylistic code errors:
 
-### Visual Studio Code
+- To run check for stylistic errors, run `npm run style-check`.
+- To fix any auto-fixable errors, run `npm run style-fix`.
 
-*TODO*
+It is recommended to do this before any commit to keep style as consinstent as possible.
+
+Many editors have plugins for ESLint which displays any stylistic errors in the editor:
+
+- Visual Studio Code: [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- Atom: [Linter](Linter) + [linter-eslint](https://atom.io/packages/linter-eslint)
 
 ## License
 
