@@ -27,7 +27,8 @@ export class Matchmaker {
     }
 
     public findGame(): Game {
-        for (const game of this.games.values()) if (!game.isPrivate() && !game.isFull()) return game;
+        for (const game of this.games.values())
+            if (!game.isPrivate() && !game.isFull()) return game;
         return this.addGame();
     }
 

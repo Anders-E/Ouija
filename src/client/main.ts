@@ -27,7 +27,10 @@ function mouseUp(e: MouseEvent): void {
 }
 
 function setMousePosition(e: MouseEvent): void {
-    mouse = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+    mouse = new THREE.Vector2(
+        (e.clientX / window.innerWidth) * 2 - 1,
+        -(e.clientY / window.innerHeight) * 2 + 1
+    );
 }
 
 function update(): void {

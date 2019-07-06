@@ -42,7 +42,9 @@ export class Game {
                 let dir = this.marker.dir(inputSum);
                 let distance = dir.magnitude();
                 this.marker = this.marker.add(
-                    dir.normalize().scale(this.markerVelocity * Math.sqrt(distance) * this.deltaTime)
+                    dir
+                        .normalize()
+                        .scale(this.markerVelocity * Math.sqrt(distance) * this.deltaTime)
                 );
             }
             io.to(this.id).emit('game_marker_pos', this.marker);

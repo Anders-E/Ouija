@@ -26,6 +26,11 @@ export const logger = createLogger({
 
 // If not in production, add debug level console transport
 if (process.env.NODE_ENV !== 'production') {
-    logger.add(new transports.Console({ level: 'debug', format: format.combine(format.colorize(), format.simple()) }));
+    logger.add(
+        new transports.Console({
+            level: 'debug',
+            format: format.combine(format.colorize(), format.simple())
+        })
+    );
     logger.debug({ message: 'Not in production, logging to console' });
 }

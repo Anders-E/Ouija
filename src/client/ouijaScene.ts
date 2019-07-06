@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import GLTFLoader from 'three-gltf-loader';
 import { Vector } from 'three';
+import { MarkerPositionMsg } from '../shared/messages';
 
 export class OuijaScene {
     private camera: THREE.Camera;
@@ -31,7 +32,7 @@ export class OuijaScene {
                     node.castShadow = true;
                     node.receiveShadow = true;
                     if (node.name == 'Board_symbols') {
-                        console.log("KEKEKEKKE");
+                        console.log('KEKEKEKKE');
                         node.castShadow = false;
                         node.layers.set(1);
                     }
@@ -43,7 +44,7 @@ export class OuijaScene {
 
                     if (node.name == 'Marker') {
                         this.marker = node;
-                        
+
                         //Marker lightsource
                         const markerLight = new THREE.SpotLight(0xffffff, 3);
                         markerLight.decay = 2;
@@ -55,13 +56,14 @@ export class OuijaScene {
                         markerLight.parent = this.marker;
                         markerLight.layers.set(1);
                         this.marker.add(markerLight);
-
                     }
                 });
 
                 this.mixer = new THREE.AnimationMixer(this.camera);
                 const clips: THREE.AnimationClip[] = gltf.animations;
-                const action = this.mixer.clipAction(THREE.AnimationClip.findByName(clips, 'Action.002'));
+                const action = this.mixer.clipAction(
+                    THREE.AnimationClip.findByName(clips, 'Action.002')
+                );
                 action.timeScale = 2; // add this
 
                 this.mixer.addEventListener('finished', (): void => {
@@ -105,7 +107,7 @@ export class OuijaScene {
         // this.scene.add(markerLight);
     }
 
-    public setMarkerPosition(position: THREE.Vector2): void {
+    public setMarkerPosition(position: MarkerPositionMsg): void {
         this.marker.position.set(position.x, 0, position.y);
     }
 
@@ -143,7 +145,12 @@ export class OuijaScene {
     }
 
     private initCamera(): THREE.PerspectiveCamera {
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(
+            45,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
         camera.position.set(0, 5, 7);
         camera.rotation.set(-90, 0, 0);
         return camera;
@@ -153,7 +160,7 @@ export class OuijaScene {
         this.renderer.autoClear = true;
         this.camera.layers.set(0);
         this.renderer.render(this.scene, this.camera);
-        
+
         this.renderer.autoClear = false;
         this.camera.layers.set(1);
         this.renderer.render(this.scene, this.camera);
