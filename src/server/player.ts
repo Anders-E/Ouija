@@ -1,13 +1,14 @@
-import { Vector2 } from './vector2';
 import { Socket } from 'socket.io';
-import { Coords } from './interfaces/coords';
+
+import { Vector2 } from './vector2';
+import { MarkerPositionMsg } from '../shared/messages';
 import { logger } from './logger';
 
 export class Player {
     public id: string;
     public socket: Socket;
     public pos: Vector2;
-    public input: Coords;
+    public input: MarkerPositionMsg;
     public didSendInput: boolean = false;
 
     public constructor(socket: Socket) {
@@ -15,7 +16,7 @@ export class Player {
         this.socket = socket;
         this.pos = new Vector2();
 
-        this.socket.on('player_marker_pos', (pos: Coords): void => {
+        this.socket.on('player_marker_pos', (pos: MarkerPositionMsg): void => {
             this.input = pos;
             this.didSendInput = true;
             logger.debug({
