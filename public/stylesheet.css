@@ -2,7 +2,7 @@ html, body {
     overflow: hidden;
     margin: 0px;
     background-color:#050a0f;
-    cursor: url('res/ui/cursor_lite.png') 4 2, auto;
+    cursor: url('res/cursor_lite.png') 4 2, auto;
 }
 
 .ui * {
@@ -87,7 +87,7 @@ button {
 
 button:hover {
     color: #FFFFFF;
-    cursor: url('res/ui/cursor_lite.png') 4 2, auto;
+    cursor: url('res/cursor_lite.png') 4 2, auto;
 }
 
 button:active {
