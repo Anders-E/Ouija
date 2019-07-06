@@ -68,7 +68,7 @@ function animate(): void {
 
     // lightningLight.intensity = THREE.Math.clamp(lightningLight.intensity - delta * 200, 0, 100);
 
-    ouijaScene.getRenderer().render(ouijaScene.getScene(), ouijaScene.getCamera());
+    ouijaScene.render();
     requestAnimationFrame(animate);
 }
 

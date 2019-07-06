@@ -20,19 +20,6 @@ export class OuijaScene {
         this.clock = new THREE.Clock();
         this.mixer = new THREE.AnimationMixer(this.camera);
 
-        // Light
-        const light = new THREE.PointLight(0x66b2ff, 3);
-        light.position.set(0, 2, 0);
-        this.scene.add(light);
-
-        // Lightning Effect
-        const lightningLight = new THREE.PointLight(0x66b2ff, 0);
-        lightningLight.position.set(3, 5, 12);
-        lightningLight.castShadow = true;
-        lightningLight.shadow.mapSize.width = 1024 * 4;
-        lightningLight.shadow.mapSize.height = 1024 * 4;
-        this.scene.add(lightningLight);
-
         // GLTF Loader
         const loader = new GLTFLoader();
         loader.load(
@@ -43,6 +30,11 @@ export class OuijaScene {
                 gltf.scene.traverse((node: THREE.Object3D): void => {
                     node.castShadow = true;
                     node.receiveShadow = true;
+                    if (node.name == 'Board_symbols') {
+                        console.log("KEKEKEKKE");
+                        node.castShadow = false;
+                        node.layers.set(1);
+                    }
 
                     if (node.name == 'BoardCollider') {
                         this.boardCollider = node;
@@ -51,6 +43,19 @@ export class OuijaScene {
 
                     if (node.name == 'Marker') {
                         this.marker = node;
+                        
+                        //Marker lightsource
+                        const markerLight = new THREE.SpotLight(0xffffff, 2);
+                        markerLight.decay = 2;
+                        markerLight.penumbra = 1;
+                        markerLight.castShadow = false;
+                        markerLight.position.set(0, 0.75, 0);
+                        markerLight.target = this.marker;
+                        // markerLight.lookAt(this.marker.position);
+                        markerLight.parent = this.marker;
+                        markerLight.layers.set(1);
+                        this.marker.add(markerLight);
+
                     }
                 });
 
@@ -77,6 +82,27 @@ export class OuijaScene {
             // called when loading has errors
             (error: ErrorEvent): void => console.log(error)
         );
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0x66b2ff, 1.5);
+        this.scene.add(ambientLight);
+
+        const symbolsAmbientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        symbolsAmbientLight.layers.set(1);
+        this.scene.add(symbolsAmbientLight);
+
+        // Lightning Effect
+        const lightningLight = new THREE.PointLight(0x66b2ff, 0);
+        lightningLight.position.set(6.12, 8.76, 15.39);
+        lightningLight.castShadow = false;
+        // lightningLight.shadow.mapSize.width = 1024 * 4;
+        // lightningLight.shadow.mapSize.height = 1024 * 4;
+        this.scene.add(lightningLight);
+
+        // markerLight.position.copy(this.marker.position);
+        // markerLight.position.copy(markerLight.position.add(new THREE.Vector3(0, 1, 0)));
+        // markerLight.parent = this.marker;
+        // this.scene.add(markerLight);
     }
 
     public setMarkerPosition(position: THREE.Vector2): void {
@@ -121,5 +147,15 @@ export class OuijaScene {
         camera.position.set(0, 5, 7);
         camera.rotation.set(-90, 0, 0);
         return camera;
+    }
+
+    public render() {
+        this.renderer.autoClear = true;
+        this.camera.layers.set(0);
+        this.renderer.render(this.scene, this.camera);
+        
+        this.renderer.autoClear = false;
+        this.camera.layers.set(1);
+        this.renderer.render(this.scene, this.camera);
     }
 }
