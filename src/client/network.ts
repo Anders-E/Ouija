@@ -1,5 +1,4 @@
 import io from 'socket.io-client';
-import Vector2 from 'three';
 
 export class Network {
     private socket: SocketIOClient.Socket;
@@ -18,6 +17,10 @@ export class Network {
             console.log('connected to server');
             console.log(this.socket);
         });
+    }
+
+    public findGame(): void {
+        this.socket.emit('findGame');
     }
 
     public getMarkerPosition(): THREE.Vector2 {
