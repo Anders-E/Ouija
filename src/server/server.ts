@@ -9,7 +9,7 @@ import { Matchmaker } from './matchmaker';
 // Express, HTTP, and Socket.IO setup
 const app: express.Express = express();
 const httpServer: http.Server = new http.Server(app);
-const io: socketio.Server = socketio(httpServer);
+export const io: socketio.Server = socketio(httpServer);
 
 // Serve client
 app.use(express.static('public'));
@@ -26,8 +26,12 @@ io.on('connection', (playerSocket: socketio.Socket): void => {
     // game.addPlayer(new Player(playerSocket));
 
     playerSocket.on('findGame', (): void => {
-        logger.info('Socket has requested to find game', playerSocket);
-        //mm.findAndJoinGame(playerSocket);
+        logger.info({
+            message: 'Socket has requested to find game',
+            event: 'findGame',
+            socketId: playerSocket.id
+        });
+        mm.findAndJoinGame(playerSocket);
     });
 
     playerSocket.on('joinGame', (gameId: string): void => {

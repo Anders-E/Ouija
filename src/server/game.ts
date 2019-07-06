@@ -3,6 +3,7 @@ import * as uuid from 'uuid';
 import { Vector2 } from './vector2';
 import { Player } from './player';
 import { logger } from './logger';
+import { io } from './server';
 
 const MAX_PLAYERS = 2;
 
@@ -44,16 +45,17 @@ export class Game {
                     dir.normalize().scale(this.markerVelocity * Math.sqrt(distance) * this.deltaTime)
                 );
             }
-
-            for (const player of this.players.values()) {
-                player.socket.emit('game_marker_pos', this.marker);
-            }
+            io.to(this.id).emit('game_marker_pos', this.marker);
         }, this.deltaTime);
     }
 
     public addPlayer(player: Player): void {
-        if (this.players.size < MAX_PLAYERS) {
-            logger.error('Player tried to join full game', player, this);
+        if (this.players.size >= MAX_PLAYERS) {
+            logger.error({
+                message: 'Player tried to join full game',
+                playerId: player.id,
+                gameId: this.id
+            });
             return;
         }
 
@@ -63,7 +65,12 @@ export class Game {
         }
 
         this.players.set(player.id, player);
-        logger.info({ message: 'Player added to game', id: player.id });
+        player.socket.join(this.id);
+        logger.info({
+            message: 'Player added to game',
+            playerId: player.id,
+            gameId: this.id
+        });
     }
 
     public getId(): string {

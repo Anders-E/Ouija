@@ -193,8 +193,8 @@ function main(): void {
 
     findSessionButton.addEventListener('click', (): void => {
         network.findGame();
-        //fade(document.getElementById('menu'));
-        //enterLoadingScreen();
+        fade(document.getElementById('menu'));
+        enterLoadingScreen();
     });
 
     network = new Network();

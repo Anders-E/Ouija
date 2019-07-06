@@ -9,14 +9,13 @@ export class Matchmaker {
 
     public constructor() {
         this.games = new Map();
-        logger.info('Matchmaker starter');
+        logger.info('Matchmaker started');
     }
 
     public addGame(): Game {
         const game = new Game();
         this.games.set(game.getId(), game);
         game.play();
-        logger.info('New game started', game);
         return game;
     }
 
@@ -28,7 +27,7 @@ export class Matchmaker {
     }
 
     public findGame(): Game {
-        for (const game of this.games.values()) if (!game.isPrivate && !game.isFull) return game;
+        for (const game of this.games.values()) if (!game.isPrivate() && !game.isFull()) return game;
         return this.addGame();
     }
 
