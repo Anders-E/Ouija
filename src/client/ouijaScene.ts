@@ -45,7 +45,7 @@ export class OuijaScene {
                         this.marker = node;
                         
                         //Marker lightsource
-                        const markerLight = new THREE.SpotLight(0xffffff, 2);
+                        const markerLight = new THREE.SpotLight(0xffffff, 3);
                         markerLight.decay = 2;
                         markerLight.penumbra = 1;
                         markerLight.castShadow = false;
@@ -87,7 +87,7 @@ export class OuijaScene {
         const ambientLight = new THREE.AmbientLight(0x66b2ff, 1.5);
         this.scene.add(ambientLight);
 
-        const symbolsAmbientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        const symbolsAmbientLight = new THREE.AmbientLight(0xffffff, 1);
         symbolsAmbientLight.layers.set(1);
         this.scene.add(symbolsAmbientLight);
 
