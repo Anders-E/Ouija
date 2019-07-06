@@ -3,11 +3,15 @@ import * as uuid from 'uuid';
 import { Vector2 } from './vector2';
 import { Player } from './player';
 import { logger } from './logger';
+import { io } from './server';
+
+const MAX_PLAYERS = 2;
 
 export class Game {
     private id: string;
     private players: Map<string, Player>;
     private marker: Vector2;
+    private private: boolean;
     private markerVelocity: number = 0.25;
     private deltaTime: number = 60 / 1000;
 
@@ -15,6 +19,7 @@ export class Game {
         this.id = uuid.v4();
         this.players = new Map<string, Player>();
         this.marker = new Vector2(0, 0);
+        this.private = false;
         logger.info({ message: 'Game created', gameId: this.id });
     }
 
@@ -40,15 +45,19 @@ export class Game {
                     dir.normalize().scale(this.markerVelocity * Math.sqrt(distance) * this.deltaTime)
                 );
             }
-
-            for (const player of this.players.values()) {
-                player.socket.emit('game_marker_pos', this.marker);
-            }
+            io.to(this.id).emit('game_marker_pos', this.marker);
         }, this.deltaTime);
     }
 
     public addPlayer(player: Player): void {
-        logger.info({ message: 'Player added to game', id: player.id });
+        if (this.players.size >= MAX_PLAYERS) {
+            logger.error({
+                message: 'Player tried to join full game',
+                playerId: player.id,
+                gameId: this.id
+            });
+            return;
+        }
 
         //Signal to players that a new player has joined
         for (const player of this.players.values()) {
@@ -56,5 +65,23 @@ export class Game {
         }
 
         this.players.set(player.id, player);
+        player.socket.join(this.id);
+        logger.info({
+            message: 'Player added to game',
+            playerId: player.id,
+            gameId: this.id
+        });
+    }
+
+    public getId(): string {
+        return this.id;
+    }
+
+    public isFull(): boolean {
+        return this.players.size >= MAX_PLAYERS;
+    }
+
+    public isPrivate(): boolean {
+        return this.private;
     }
 }

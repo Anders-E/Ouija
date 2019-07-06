@@ -192,6 +192,7 @@ function main(): void {
     $(eventText).hide();
 
     findSessionButton.addEventListener('click', (): void => {
+        network.findGame();
         fade(document.getElementById('menu'));
         enterLoadingScreen();
     });
