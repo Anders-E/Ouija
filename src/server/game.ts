@@ -5,7 +5,7 @@ import { Player } from './player';
 import { logger } from './logger';
 import { io } from './server';
 
-const MAX_PLAYERS = 2;
+const MAX_PLAYERS = 5;
 
 export class Game {
     private id: string;
