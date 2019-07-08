@@ -47,5 +47,5 @@ io.on('connection', (playerSocket: socketio.Socket): void => {
     });
 });
 
-const port = process.env.port || 3000;
+const port = process.env.port || 80;
 httpServer.listen(port, (): Logger => logger.info({ message: `Ouija listening on port ${port}` }));
