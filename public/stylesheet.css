@@ -98,3 +98,20 @@ button:active {
 button:focus {
     outline:0;
 }
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.25s, opacity .25s ease-in-out;
+    -moz-transition: visibility 0s 0.25s, opacity .25s ease-in-out;
+    -webkit-transition: visibility 0s 0.25s, opacity .25s ease-in-out;
+}
+
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+    }
+ 
