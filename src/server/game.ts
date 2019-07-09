@@ -6,6 +6,7 @@ import { logger } from './logger';
 import { io } from './server';
 
 const MAX_PLAYERS = 5;
+const MARKER_MOVEMENT_THRESHOLD = 10;
 
 export class Game {
     private id: string;
@@ -24,6 +25,8 @@ export class Game {
     }
 
     public play(): void {
+        let tmpMarkerPos = this.marker;
+
         setInterval((): void => {
             let inputSum = new Vector2();
             let numInput = 0;
@@ -41,14 +44,21 @@ export class Game {
                 //find direction vector
                 let dir = this.marker.dir(inputSum);
                 let distance = dir.magnitude();
-                this.marker = this.marker.add(
+                tmpMarkerPos = this.marker.add(
                     dir
                         .normalize()
                         .scale(this.markerVelocity * Math.sqrt(distance) * this.deltaTime)
                 );
             }
-            io.to(this.id).emit('game_marker_pos', this.marker);
+
+            if (tmpMarkerPos.dist(this.marker) > MARKER_MOVEMENT_THRESHOLD)
+                this.setAndEmitMarkerPosition(tmpMarkerPos);
         }, this.deltaTime);
+    }
+
+    private setAndEmitMarkerPosition(position: Vector2): void {
+        this.marker = position;
+        io.to(this.id).emit('game_marker_pos', this.marker);
     }
 
     public addPlayer(player: Player): void {
