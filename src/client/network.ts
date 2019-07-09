@@ -4,7 +4,7 @@ import { MarkerPositionMsg } from '../shared/messages';
 
 export class Network {
     private socket: SocketIOClient.Socket;
-    private markerPosition: MarkerPositionMsg;
+    private markerPosition: MarkerPositionMsg = { x: 0, y: 0 };
 
     public constructor() {
         this.socket = io();

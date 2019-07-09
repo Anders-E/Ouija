@@ -6,7 +6,7 @@ import { logger } from './logger';
 import { io } from './server';
 
 const MAX_PLAYERS = 5;
-const MARKER_MOVEMENT_THRESHOLD = 10;
+const MARKER_MOVEMENT_THRESHOLD = 0.004;
 
 export class Game {
     private id: string;
