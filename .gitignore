@@ -83,7 +83,6 @@ typings/
 **/dist
 
 # Images, won't be needed since textures are baked into model .glb format
-*.png
 *.psd
 *.blend*
 *.fbx
