@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { stringify } from 'querystring';
 import {Constants} from './constants';
 import { ViewManager } from './viewManager';
-import { Network } from './network';
+import * as Input from './modules/input';
 
 export class GameView extends HTMLView {
     
@@ -46,7 +46,6 @@ export class GameView extends HTMLView {
 
     public didReceiveMessage(message: string) : void {
         super.didReceiveMessage(message);
-        // console.log(this);
 
         if(message == Constants.LOAD_SCENE_MESSAGE) {
             this.init();
@@ -62,9 +61,6 @@ export class GameView extends HTMLView {
 
     public startSession(): void {
         this.rootElement.appendChild(this.ouijaScene.getRenderer().domElement);
-        window.addEventListener('mousemove', this.setMousePosition, false);
-        window.addEventListener('mousedown',  this.mouseDown, false);
-        window.addEventListener('mouseup',  this.mouseUp, true);
         // $(this.ouijaScene.getRenderer().domElement).hide();
         // eventSystem.addEvent(
         //     new Event((): void => {
@@ -83,13 +79,9 @@ export class GameView extends HTMLView {
         //     }, 0.001)
         // );
     
+        // let anim = this.animate.bind(this);
+        // anim();
         this.animate();
-    
-        // //Slight delay before fading out the loading screen
-        // setTimeout((): void => {
-        //     this.fade(document.getElementById('loading-screen'));
-        //     this.unfade(ouijaScene.getRenderer().domElement);
-        // }, 1000);
     }
     
     public endSession(): void {
@@ -110,11 +102,14 @@ export class GameView extends HTMLView {
         //         }
         //     }
         // );
-        if (this.getMouseDown()) {
-            console.log("WHAT?");
+        // console.log(Input.getMouseDown());
+        if (Input.getMouseDown()) {
+            const mousePosition = new THREE.Vector2(
+                (Input.getMousePositionX() / window.innerWidth) * 2 - 1,
+            -(Input.getMousePositionY() / window.innerHeight) * 2 + 1);
 
             const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(this.mousePosition, this.ouijaScene.getCamera());
+            raycaster.setFromCamera(mousePosition, this.ouijaScene.getCamera());
             const intersects: THREE.Intersection[] = [];
             this.ouijaScene.getBoardCollider().raycast(raycaster, intersects);
             if (intersects.length > 0) {
@@ -127,7 +122,7 @@ export class GameView extends HTMLView {
         this.ouijaScene.setMarkerPosition(this.network.getMarkerPosition());
     }
 
-    animate = () => {
+    public animate(): void {
         let delta = this.ouijaScene.getClock().getDelta();
         this.update();
         this.ouijaScene.getMixer().update(delta);
@@ -140,10 +135,6 @@ export class GameView extends HTMLView {
 
         window.requestAnimationFrame(this.animate.bind(this));
     }
-    
-    // public animate(): void {
-        
-    // }
     
     private onPlayerJoined(): void {
         //TODO: Handle event sound effects 
@@ -159,38 +150,15 @@ export class GameView extends HTMLView {
     public displayEventMessage(message: string, duration: number): void {
         this.eventText.innerHTML = message;
 
-        //TODO: Unfade and fade message
-        // unfade(eventText);
-        // setTimeout((): void => {
-        //     fade(eventText);
-        // }, duration * 1000);
+        this.eventText.classList.add("visible");
+
+        setTimeout((): void => {
+            this.eventText.classList.add("hidden");
+        }, duration * 1000);
     }
 
     public getOuijaScene() : OuijaScene {
         return this.ouijaScene;
-    }
-    
-    private mouseDown() : void {
-        this.isMouseDown = true;
-    }
-    
-    private mouseUp() : void {
-        this.isMouseDown = false;
-    }
-
-    private getMouseDown() : boolean {
-        return this.isMouseDown;
-    }
-
-    private setMousePosition(e: MouseEvent): void {
-        this.mousePosition = new THREE.Vector2(
-            (e.clientX / window.innerWidth) * 2 - 1,
-            -(e.clientY / window.innerHeight) * 2 + 1
-        );
-    }
-    
-    private getMousePosition() : THREE.Vector2 {
-        return this.mousePosition;
     }
 
     public didEnter() : void {
