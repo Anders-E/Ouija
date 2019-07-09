@@ -1,5 +1,6 @@
 import { HTMLView } from './view';
 import { ViewManager } from './viewManager';
+import {Settings} from '../settings';
 import {OuijaScene} from '../ouijaScene';
 import { EventSystem } from '../eventSystem';
 
@@ -9,6 +10,9 @@ import {Constants} from '../constants';
 import * as Input from '../modules/input';
 
 export class GameView extends HTMLView {
+
+    public muteButton: HTMLElement;
+    public settingsButton: HTMLElement;
     
     private ouijaScene: OuijaScene;
 
@@ -23,6 +27,23 @@ export class GameView extends HTMLView {
         super(document.getElementById('game'));
 
         this.eventText = document.getElementById('eventText');
+
+        this.muteButton = document.getElementById("mute-button");
+        this.muteButton.addEventListener('click', () => {
+            if(Settings.getInstance().isMuted()) {
+                Settings.getInstance().unmute();
+                this.muteButton.classList.remove("muted");
+            }
+            else {
+                Settings.getInstance().mute();
+                this.muteButton.classList.add("muted");
+            }
+        });
+
+        this.settingsButton = document.getElementById("settings-button-game");
+        this.settingsButton.addEventListener('click', () => {
+            ViewManager.getInstance().showSettings();
+        });
 
         this.isMouseDown = false;
         this.ouijaScene = new OuijaScene();
@@ -54,13 +75,17 @@ export class GameView extends HTMLView {
         }
     }
 
+    public mute() : void {
+        console.log("Muted!");
+    }
+
     private ouijaSceneLoaded() : void {
         console.log("OuijaScene loaded!");
         ViewManager.getInstance().sendMessage(1, Constants.SCENE_LOADED_MESSAGE);
     }
 
     public startSession(): void {
-        this.rootElement.appendChild(this.ouijaScene.getRenderer().domElement);
+        document.body.appendChild(this.ouijaScene.getRenderer().domElement);
         // $(this.ouijaScene.getRenderer().domElement).hide();
         // eventSystem.addEvent(
         //     new Event((): void => {

@@ -19,7 +19,6 @@ function main(): void {
     viewManager.addView(new MenuView(), true);
     viewManager.addView(new LoadingView());
     viewManager.addView(new GameView());
-    // viewManager.addView(new SettingsView());
 
     viewManager.start();
 }

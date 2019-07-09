@@ -1,4 +1,5 @@
 import {HTMLView} from './view';
+import { SettingsView } from './settingsView';
 
 export class ViewManager {
 
@@ -7,7 +8,10 @@ export class ViewManager {
     private views:HTMLView[] = [];
     private activeView: HTMLView;
 
+    private settingsView: SettingsView;
+
     public constructor() {
+        this.settingsView = new SettingsView();
     }
 
     public static getInstance() : ViewManager {
@@ -67,5 +71,13 @@ export class ViewManager {
 
         const toView = this.views[targetViewIndex];
         toView.didReceiveMessage(message);
+    }
+
+    public showSettings() : void {
+        this.settingsView.show();
+    }
+
+    public hideSettings() : void {
+        this.settingsView.hide();
     }
 }

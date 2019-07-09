@@ -4,6 +4,7 @@ import $ from 'jquery';
 export class HTMLView {
 
     private enabled: boolean; 
+    private isViewVisible: boolean = false;
     protected rootElement:HTMLElement;
     protected network: Network;
 
@@ -14,14 +15,31 @@ export class HTMLView {
         this.rootElement.classList.add("hidden");
     }
 
+    public show() : void {
+        // if(!this.enabled) {
+        //     return;
+        // }
+        this.isViewVisible = true;
+        this.rootElement.classList.replace("hidden", "visible");
+    }
+
+    public hide() : void {
+        // if(!this.enabled) {
+        //     return;
+        // }
+        this.rootElement.classList.replace("visible", "hidden");
+        this.isViewVisible = false;
+    }
+
+    public isVisible() : boolean {
+        return this.isViewVisible;
+    }
+
     public setEnabled(transition: boolean = false) : void {
-        if(this.enabled) {
-            return;
-        }
         this.enabled = true;
 
         if(transition) {
-            this.rootElement.classList.replace("hidden", "visible");
+            this.show();
         } 
         else {
             //TODO: Instantaneous transition
@@ -32,14 +50,14 @@ export class HTMLView {
         if(!this.enabled) {
             return;
         }
-        this.enabled = false;
 
         if(transition) {
-            this.rootElement.classList.replace("visible", "hidden");
+            this.hide();
         }
         else {
             //TODO: Instantaneous transition
         }
+        this.enabled = false;
     }
 
     public didEnter() : void {
