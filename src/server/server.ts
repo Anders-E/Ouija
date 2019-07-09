@@ -3,6 +3,7 @@ import http from 'http';
 import socketio from 'socket.io';
 import { Logger } from 'winston';
 
+import { config } from './config';
 import { logger } from './logger';
 import { Matchmaker } from './matchmaker';
 
@@ -47,5 +48,7 @@ io.on('connection', (playerSocket: socketio.Socket): void => {
     });
 });
 
-const port = process.env.port || 3000;
-httpServer.listen(port, (): Logger => logger.info({ message: `Ouija listening on port ${port}` }));
+httpServer.listen(
+    config.port,
+    (): Logger => logger.info({ message: `Ouija listening on port ${config.port}` })
+);
