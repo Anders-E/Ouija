@@ -27,6 +27,10 @@ html, body {
     position: absolute;
 }
 
+.settings > * {
+    position: absolute;
+}
+
 .event {
     text-align: right;
     font-size:30px;
@@ -68,6 +72,24 @@ html, body {
     user-select: none; /* Standard syntax */
 }
 
+.mute-button {
+    background: url('res/mute_icon.svg');
+    border: none;
+
+    background-size: 100% 100%;
+    width: 40px;
+    height: 40px;
+}
+
+.mute-button.muted {
+    background: url('res/mute_icon_muted.svg');
+    border: none;
+
+    background-size: 100% 100%;
+    width: 40px;
+    height: 40px;
+}
+
 .ui-text-small {
     font-size: 15px;
 
@@ -98,3 +120,20 @@ button:active {
 button:focus {
     outline:0;
 }
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.25s, opacity .25s ease-in-out;
+    -moz-transition: visibility 0s 0.25s, opacity .25s ease-in-out;
+    -webkit-transition: visibility 0s 0.25s, opacity .25s ease-in-out;
+}
+
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+    }
+ 

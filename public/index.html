@@ -19,35 +19,40 @@
         <script type="module" src="dist/bundle.js"></script>
 
         <div style="left: 50%; top: 50%;" class="ui">
-            <div id="menu" class="menu">
+            <div id="menu" class="menu hidden">
                 <p style="left: 50%; top: 20%" id="logo" class="logo">
                     OUIJA
                 </p>
                 <button style="left: 50%; top: 50%" id="findSession" class="ui-text">Find session</button>
                 <button style="left: 50%; top: 55%" id="joinExistingSession" class="ui-text">Join session</button>
-                <button style="left: 50%; top: 60%" id="settings" class="ui-text">Settings</button>
+                <button style="left: 50%; top: 60%" id="settings-button-menu" class="ui-text">Settings</button>
                 <p style="left: 50%; top: 90%" id="credits" class="ui-text-small">
                     Creative UX, 2018
                 </p>
             </div>
 
-            <div  id="loading-screen" class="loading-screen">
+            <div  id="loading-screen" class="loading-screen hidden">
                 <img style="left: 5%;" class="loading-icon" src="/res/marker_icon.svg">
-                <p style="left: 20%;" id="loading-screen-text" class="ui-text">
+                <p style="left: 15%;" id="loading-screen-text" class="ui-text">
                     Finding session...
                 </p>
-                <p style="left: 20%; top: 5%" class="ui-text-small">
+                <p style="left: 15%; top: 7%" class="ui-text-small">
                     Don't forget to turn off the lights
                 </p>
             </div>
 
-            <div id="game" class="game">
+            <div id="game" class="game hidden">
+                <button style="left: 5%; top: 5%"  id="mute-button" class ="mute-button"></button>
                 <button style="left: 5%; top: 75%" id="about"  class="ui-text">About</button>
-                <button style="left: 5%; top: 80%" id="settings"  class="ui-text">Settings</button>
+                <button style="left: 5%; top: 80%" id="settings-button-game"  class="ui-text">Settings</button>
                 <button style="left: 5%; top: 90%" id="leave"  class="ui-text">Leave séance</button>
-                <p style="left: 5%; top: 0%" id="eventText" class="event">
+                <p style="right: 5%; top: 5%" id="eventText" class="event hidden">
                     You feel as though someone is watching you...
                 </p>
+            </div>
+
+            <div id="settings" class="settings hidden">
+                <img style="left: 30%; top: 20%; height: 60%; width: 50%; opacity: 0.85" src="res/Settings_placeholder.png" alt="*Ptscchhhhhhh*">            
             </div>
         </div>
     </body>

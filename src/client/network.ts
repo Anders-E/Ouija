@@ -3,10 +3,12 @@ import io from 'socket.io-client';
 import { MarkerPositionMsg } from '../shared/messages';
 
 export class Network {
+    private static instance: any;
+
     private socket: SocketIOClient.Socket;
     private markerPosition: MarkerPositionMsg = { x: 0, y: 0 };
 
-    public constructor() {
+    constructor() {
         this.socket = io();
         this.socket.on('connect', (): void => {
             this.socket.on('game_marker_pos', this.onGameMarkerPosition.bind(this));
@@ -14,8 +16,15 @@ export class Network {
             this.socket.on('playerLeft', this.onPlayerLeft.bind(this));
 
             console.log('connected to server');
-            console.log(this.socket);
+            console.log(this.socket)
         });
+    }
+
+    public static getInstance() {
+        if(this.instance == null) {
+            this.instance = new Network();
+        }
+        return this.instance;
     }
 
     public findGame(): void {
