@@ -26,12 +26,12 @@ export class OuijaScene {
         this.mixer = new THREE.AnimationMixer(this.camera);
     }
 
-    public initialize(callback: Function) : void {
+    public initialize(callback: Function): void {
         this.initScene(callback);
         this.initSounds();
     }
 
-    private initScene(callback: Function) : void {
+    private initScene(callback: Function): void {
         // GLTF Loader
         const loader = new GLTFLoader();
         loader.load(
@@ -121,7 +121,7 @@ export class OuijaScene {
 
     private initSounds(): void {
         const audioListener = new THREE.AudioListener();
-    
+
         const ambientSound = new THREE.Audio(audioListener);
         const audioLoader = new THREE.AudioLoader();
         audioLoader.load(
@@ -135,12 +135,11 @@ export class OuijaScene {
             (): void => {},
             (): void => {}
         ); // TODO: Add onProgress and onError functions: https://threejs.org/docs/#api/en/loaders/AudioLoader
-    
+
         const lightningListener = new THREE.AudioListener();
         this.lightningSound = new THREE.Audio(lightningListener);
         this.lightningAudioLoader = new THREE.AudioLoader();
     }
-
 
     public setMarkerPosition(position: MarkerPositionMsg): void {
         this.marker.position.set(position.x, 0, position.y);

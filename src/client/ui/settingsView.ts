@@ -1,9 +1,7 @@
-import {HTMLView} from './view';
-import {Settings} from '../settings';
+import { HTMLView } from './view';
 
-export class SettingsView extends HTMLView{
-
+export class SettingsView extends HTMLView {
     public constructor() {
-        super(document.getElementById("settings"));
+        super(document.getElementById('settings'));
     }
 }

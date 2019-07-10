@@ -4,7 +4,7 @@ import { MenuView } from './ui/menuView';
 import { LoadingView } from './ui/loadingView';
 import { GameView } from './ui/gameView';
 import { SettingsView } from './ui/settingsView';
-import {Constants} from './constants';
+import { Constants } from './constants';
 import * as Input from './modules/input';
 
 /*** GLOBALS ***/

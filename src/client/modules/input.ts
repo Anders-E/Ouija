@@ -1,24 +1,24 @@
 /** GLOBALS */
-var isMouseDown: boolean = false;
-var mouseX : number = 0;
-var mouseY : number = 0;
+var isMouseDown = false;
+var mouseX = 0;
+var mouseY = 0;
 
-export function initialize() : void {
+export function initialize(): void {
     isMouseDown = false;
     window.addEventListener('mousemove', setMousePosition, false);
-    window.addEventListener('mousedown',  mouseDown, false);
-    window.addEventListener('mouseup',  mouseUp, true);
+    window.addEventListener('mousedown', mouseDown, false);
+    window.addEventListener('mouseup', mouseUp, true);
 }
 
-function mouseDown() : void {
+function mouseDown(): void {
     isMouseDown = true;
 }
 
-function mouseUp() : void {
+function mouseUp(): void {
     isMouseDown = false;
 }
 
-export function getMouseDown() : boolean {
+export function getMouseDown(): boolean {
     return isMouseDown;
 }
 
