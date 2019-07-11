@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>Ouija</title>
-        <meta charset="utf-8"/>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
 
-        <link rel="stylesheet" type="text/css" href="/stylesheet.css">
-        <link href="https://fonts.googleapis.com/css?family=Cinzel+Decorative:400,700&display=swap" rel="stylesheet">
+<head>
+    <title>Ouija</title>
+    <meta charset="utf-8" />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
 
-        <link rel="apple-touch-icon" sizes="180x180" href="/res/icons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/res/icons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/res/icons/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
-    </head>
-    <body>
-        <!-- Ouija -->
-        <script type="module" src="dist/bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="/stylesheet.css">
+    <link href="https://fonts.googleapis.com/css?family=Cinzel+Decorative:400,700&display=swap" rel="stylesheet">
 
-        <div style="left: 50%; top: 50%;" class="ui">
-            <div id="menu" class="menu hidden">
-                <p style="left: 50%; top: 20%" id="logo" class="logo">
-                    OUIJA
-                </p>
-                <button style="left: 50%; top: 50%" id="findSession" class="ui-text">Find session</button>
-                <button style="left: 50%; top: 55%" id="joinExistingSession" class="ui-text">Join session</button>
-                <button style="left: 50%; top: 60%" id="settings-button-menu" class="ui-text">Settings</button>
-                <p style="left: 50%; top: 90%" id="credits" class="ui-text-small">
-                    Creative UX, 2018
-                </p>
-            </div>
+    <link rel="apple-touch-icon" sizes="180x180" href="/res/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/res/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/res/icons/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+</head>
 
-            <div  id="loading-screen" class="loading-screen hidden">
-                <img style="left: 5%;" class="loading-icon" src="/res/marker_icon.svg">
-                <p style="left: 15%;" id="loading-screen-text" class="ui-text">
-                    Finding session...
-                </p>
-                <p style="left: 15%; top: 7%" class="ui-text-small">
-                    Don't forget to turn off the lights
-                </p>
-            </div>
+<body>
+    <!-- Ouija -->
+    <script type="module" src="dist/bundle.js"></script>
 
-            <div id="game" class="game hidden">
-                <button style="left: 5%; top: 5%"  id="mute-button" class ="mute-button"></button>
-                <button style="left: 5%; top: 75%" id="about"  class="ui-text">About</button>
-                <button style="left: 5%; top: 80%" id="settings-button-game"  class="ui-text">Settings</button>
-                <button style="left: 5%; top: 90%" id="leave"  class="ui-text">Leave séance</button>
-                <p style="right: 5%; top: 5%" id="eventText" class="event hidden">
-                    You feel as though someone is watching you...
-                </p>
-            </div>
-
-            <div id="settings" class="settings hidden">
-                <img style="left: 30%; top: 20%; height: 60%; width: 50%; opacity: 0.85" src="res/Settings_placeholder.png" alt="*Ptscchhhhhhh*">            
-            </div>
+    <div style="left: 50%; top: 50%;" class="ui">
+        <div id="menu" class="menu hidden">
+            <p style="left: 50%; top: 20%" id="logo" class="logo">
+                OUIJA
+            </p>
+            <button style="left: 50%; top: 50%" id="findSession" class="ui-text">Find session</button>
+            <button style="left: 50%; top: 55%" id="joinExistingSession" class="ui-text">Join session</button>
+            <button style="left: 50%; top: 60%" id="settings-button-menu" class="ui-text">Settings</button>
+            <p style="left: 50%; top: 90%" id="credits" class="ui-text-small">
+                Creative UX, 2018
+            </p>
         </div>
-    </body>
+
+        <div id="loading-screen" class="loading-screen hidden">
+            <img style="left: 5%;" class="loading-icon" src="/res/marker_icon.svg">
+            <p style="left: 15%;" id="loading-screen-text" class="ui-text">
+                Finding session...
+            </p>
+            <p style="left: 15%; top: 7%" class="ui-text-small">
+                Don't forget to turn off the lights
+            </p>
+        </div>
+
+        <div id="game" class="game hidden">
+            <button style="left: 5%; top: 5%" id="mute-button" class="mute-button"></button>
+            <button style="left: 5%; top: 75%" id="about" class="ui-text">About</button>
+            <button style="left: 5%; top: 80%" id="settings-button-game" class="ui-text">Settings</button>
+            <button style="left: 5%; top: 90%" id="leave" class="ui-text">Leave séance</button>
+            <p style="right: 5%; top: 5%" id="eventText" class="event hidden">
+                You feel as though someone is watching you...
+            </p>
+        </div>
+
+        <div id="settings" class="settings hidden">
+            <img style="left: 30%; top: 20%; height: 60%; width: 50%; opacity: 0.85" src="res/Settings_placeholder.png" alt="*Ptscchhhhhhh*">
+        </div>
+    </div>
+</body>
+
 </html>
